@@ -28,7 +28,7 @@ tot_iter = 1500 # Run for 2000 iterations.
 # r_bound = 1
 # v_bound = 1e-4
 eig_vala = 1
-eig_valb = 0.1
+eig_valb = 0.2
 eig_gap =  (eig_vala-eig_valb)/d #1 is largest eigval and 0.1 is smallest and there are d eigvalues so lambda_1 - lambda_2 = 0.9/d
 step_size = 0.2
 #%% Find Beta
