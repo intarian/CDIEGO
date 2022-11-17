@@ -11,13 +11,13 @@
 #%% Begin Implementation. Start with Importing Libraries
 import numpy as np
 import networkx as nx
-import pandas as pd
-import itertools
-from scipy import stats as sps
+# import pandas as pd
+# import itertools
+# from scipy import stats as sps
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 np.random.seed(1)
-import time
+# import time
 from functions import *
 #%% Define Parameters
 N = 80 # Set No. of Nodes, Each node gets one sample in single iteration
@@ -28,7 +28,7 @@ tot_iter = 1500 # Run for 2000 iterations.
 # r_bound = 1
 # v_bound = 1e-4
 eig_vala = 1
-eig_valb = 0.68
+eig_valb = 0.1
 eig_gap =  (eig_vala-eig_valb)/d #1 is largest eigval and 0.1 is smallest and there are d eigvalues so lambda_1 - lambda_2 = 0.9/d
 step_size = 0.2
 #%% Find Beta
@@ -50,7 +50,7 @@ W_nf = W_gen_M(N, A)
 # For fully connected system
 diego_f_cnnc = DIEGO(W_f,1,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
 # For connected system
-R_nf = [2,3]
+R_nf = [0,1,2]
 diego_nf_cnnc = np.zeros([len(R_nf),tot_iter])
 for round in range(0,len(R_nf)):
     diego_nf_cnnc[round,:] = DIEGO(W_nf,R_nf[round],N,d,vti,tot_iter,x_samples,pca_vect,step_size)

@@ -4,6 +4,7 @@ import numpy as np
 def Column(x):
     return np.atleast_2d(x).T
 
+## This function generates pop covariance matrix and data samples too
 # def data_gen(n,d,eig_vala,eig_valb):
 #     # Using d=3 and a custom covariance matrix
 #     A = np.random.normal(0,1,(d,d))  # Generate random normal matrix of size d x d
@@ -18,6 +19,8 @@ def Column(x):
 #     # pca_vect = Sigma[:,0]
 #     return x,pca_vect,Sigma
 
+
+## This function generates pop covariance matrix only
 def data_gen_cov_mat(d,eig_vala,eig_valb):
     # Using d=3 and a custom covariance matrix
     A = np.random.normal(0,1,(d,d))  # Generate random normal matrix of size d x d
@@ -48,19 +51,6 @@ def gen_graph_adjacency(N,p):
             U = np.triu(U) # This computation can be relatively reduced by adjusting for loops
             # For Adjacency matrix: As its a symmetric with 0's on diagonal i.e. node has 0 connection to itself
             A = (U.T + U) * (np.ones(N) - np.eye(N))
-
-            ## Old Code, dont use this now
-            # ## This code creates adjacency matrix (not fully connected graph though)
-            # U = np.zeros((N, N))
-            # o = 0
-            # # This below For loop creates a random upper triangular matrix
-            # for r in range(N, 0, -1):
-            #     q = np.random.randint(2, size=[1, r])
-            #     U[o, :] = np.concatenate((np.zeros((1, N - np.size(q))), q), 1)
-            #     o += 1;
-            # A = (U.T + U) * (np.ones(N) - np.eye(N))
-            # print(A)
-
             ## Create Degree Matrix for Laplacian
             D = np.zeros((N, N))
             for i in range(N):
@@ -166,24 +156,28 @@ def DIEGO(W,R,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
     for sample in range(0, tot_iter):
         # gamma_ext = eta/(eig_gap*(beta+sample))
         gamma_ext = step_size / (1 + sample)
-        upd_n = np.zeros([d, N])  # Store update values across all nodes for each sample
+        # gamma_ext = np.ceil(((sample + 1)) / 10) # piecewise linear decay
+        upd_n = np.matrix(np.zeros([d, N]))  # Store update values across all nodes for each sample
         # Begin loop to take sample from each node and update eigenvector estimate
         for i_n in range(0, N):
             x_n = Column(x_samples_n[i_n, sample, :])  # Draw sample across node i_n
             vn = v_n[:, i_n]  # Draw current estimate of eigenvector across node i_n
-            upd_n[:, i_n] = Column(x_n @ x_n.T @ vn)
-        # Exchange information among all nodes. Use value of R to achieve multiple rounds
-        if (N > 1): # use rounds only for multiple nodes.
+            upd_n[:, i_n] = (x_n @ x_n.T @ vn)
+        # Exchange information among all nodes. Use value of R to achieve multiple rounds.
+        if (N > 1 and R>0): # use rounds only for multiple nodes. If R=0, we don't use any communication between nodes
             for round in range(0,R):
-                upd_n = upd_n @ W
+                upd_n = upd_n @ W # Regardless of W. If fully connected it won't change upd_n if R>0. Though increases comp cost
         # Update eigenvector estimate
         if ((W == np.matrix(1 / N * (np.ones((N, 1)) @ np.ones((N, 1)).T))).all()):
             v_n = v_n + gamma_ext * N*upd_n
         else:
-            W_e1 = (W**R)
-            W_e1 = W_e1[:,0]+0.0001
+            if (R>0):
+                W_e1 = (W**R)
+                W_e1 = W_e1[:,0]+0.0001
+            else:
+                W_e1 = W[:,0]+0.0001
             for i_n in range(0,N):
-                v_n[:,i_n] = v_n[:,i_n] + gamma_ext * upd_n[:,i_n]/(W_e1[i_n]).item()
+                v_n[:,i_n] = v_n[:,i_n] + gamma_ext * (upd_n[:,i_n])/(W_e1[i_n]).item()
         # Normalize the estimate to make unit norm
         for i_n in range(0, N):
             v_n[:, i_n] = v_n[:, i_n] / np.linalg.norm(v_n[:, i_n], 2)
