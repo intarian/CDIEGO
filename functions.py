@@ -146,7 +146,8 @@ def W_gen_M(N,A):
 # tot_iter: Total no. of iterations to run the algorithm
 # step_c: Piecewise linear decaying factor
 # pca_vect: Original PCA vect to compare error.
-def DIEGO(W,R,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
+def DIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
+    ## Comm rounds are computed in each iterations as R = log(N*t) as t increases R increases
     # Data samples distribute among N nodes
     x_samples_n = np.reshape(x_samples, (N, tot_iter, d))
     # Now we initialize all N nodes with initial eigenvector vti
@@ -159,6 +160,8 @@ def DIEGO(W,R,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
         # gamma_ext = np.ceil(((sample + 1)) / 10) # piecewise linear decay
         upd_n = np.matrix(np.zeros([d, N]))  # Store update values across all nodes for each sample
         # Begin loop to take sample from each node and update eigenvector estimate
+        ## Calculate Communication Rounds
+        R = int(np.ceil(np.log(N*(sample+1)))) # sample+1 as sample starts from 0
         for i_n in range(0, N):
             x_n = Column(x_samples_n[i_n, sample, :])  # Draw sample across node i_n
             vn = v_n[:, i_n]  # Draw current estimate of eigenvector across node i_n
