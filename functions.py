@@ -69,20 +69,20 @@ def gen_graph_adjacency(N,p):
             return np.matrix([1])
 
 
-def W_gen(N,A):
-    if (N>1):
-        D = np.zeros((N, N))
-        for i in range(N):
-            D[i, i] = np.sum(A[i, :])
-        ## Create Laplacian Matrix from Degree Matrix and Adjacency Matrix
-        L = D - A
-        if (N > 1):
-            e = np.linalg.eigvalsh(L)
-            alpha = 2 / (e[-1] + e[1])
-            W = np.eye(N) - (alpha * L)
-        return W
-    else:
-        return np.matrix([1])
+# def W_gen(N,A):
+#     if (N>1):
+#         D = np.zeros((N, N))
+#         for i in range(N):
+#             D[i, i] = np.sum(A[i, :])
+#         ## Create Laplacian Matrix from Degree Matrix and Adjacency Matrix
+#         L = D - A
+#         if (N > 1):
+#             e = np.linalg.eigvalsh(L)
+#             alpha = 2 / (e[-1] + e[1])
+#             W = np.eye(N) - (alpha * L)
+#         return W
+#     else:
+#         return np.matrix([1])
 
 def W_gen_M(N,A):
     # Calculate Laplacian Matrix using Adjacency matrix
@@ -161,7 +161,7 @@ def DIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
         upd_n = np.matrix(np.zeros([d, N]))  # Store update values across all nodes for each sample
         # Begin loop to take sample from each node and update eigenvector estimate
         ## Calculate Communication Rounds
-        R = int(np.ceil(np.log(N*(sample+1)))) # sample+1 as sample starts from 0
+        R = int(np.ceil((N*(sample+1)))) # sample+1 as sample starts from 0
         for i_n in range(0, N):
             x_n = Column(x_samples_n[i_n, sample, :])  # Draw sample across node i_n
             vn = v_n[:, i_n]  # Draw current estimate of eigenvector across node i_n

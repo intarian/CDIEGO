@@ -1,13 +1,11 @@
-#%% This is an implementation of Consensus DIEGO Algorithm
-# Introduction: DIEGO algorithm as purposed in Arpita's thesis is one-time scale algorithm.
-# Here we extend this algorithm to two time scale and showcase that by using multiple communication
-# rounds (i.e. nodes exchange their updates multiple times) so that the performance dependence is
-# decreased on network topology.
-#%% Hypothesis: The dependence of performance on network topology can be reduced by using
-# multiple rounds of communications per iteration in Consensus DIEGO (CDIEGO).
-# To test this Hypothesis, we first generate different topologies using Erdos-Renyi graphs and test it out
-# using against Fully connected Network and run multiple communication rounds to verify that Fully connected
-# network still outperforms.
+#%% This files proves Hypothesis A which is as follows:
+#%% Hypothesis A: This hypothesis shows that the eigenvector estimate \hat{v} from strongly connected graph
+# and v_i which is an estimate of eigenvector at node i bounds the consensus error in CDIEGO algorithm as proved. i.e.
+# ||\hat{v} - v_i || <= \frac{\delta N r \eta}{(\lambda_1 - \lambda_2)} (\frac{t}{beta} + \hat{\gamma})
+# Basically, the above result shows that the for $\delta = (\frac{\eps}{Nt})^(3/2)$ the consensus error has a rate
+# of $\O(1/sqrt{Nt}$ and Tc = \O(T_mix 3/2 log(eps/Nt)).
+#%% For simplicity, we choose step size of \alpha_t = 1/t. which makes our bound comes out to be
+# ||\hat{v} - v_i || <= \frac{\delta N r }{(\lambda_1 - \lambda_2)} (\frac{t}{beta} + \hat{\gamma})
 #%% Begin Implementation. Start with Importing Libraries
 import numpy as np
 import networkx as nx
@@ -61,6 +59,3 @@ plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
 plt.show()
-
-
-# Some Notes: In NFC case you should compare with average value at t iterations and then observe the residual error due to consenus rounds increasing with t to ensure that the error goes to 0 with increase in t
