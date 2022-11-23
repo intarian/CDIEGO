@@ -56,7 +56,7 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
 #%% Define Parameters
 N = 10 # Set No. of Nodes, Each node gets one sample in single iteration
 d = 5 # Set dimensionality of data
-tot_iter = 500 # Run for t iterations.
+tot_iter = 1000 # Run for t iterations.
 step_size = 0.2
 eig_vala = 1
 eig_valb = 0.1
@@ -77,17 +77,17 @@ for mon in range(0,monte_carlo):
     diego_f_cnnc_m[mon,:] = DIEGO_HypA(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
 diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
 #%% Compute true approximation (ignoring the scaling part)
-diego_scaling_fac_a = 1/(((N*np.arange(1,tot_iter+1))*eig_gap**2)) # is scaling only by O(1/sqrt(Nt))
-diego_scaling_fac_b = ((1/(np.arange(1,tot_iter+1)) + 1/(N*np.arange(1,tot_iter+1)))) #is by O(sqrt(1/t +1/(Nt)))
+diego_scaling_fac_a = 1/(((N*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
+# diego_scaling_fac_b = ((1/(np.arange(1,tot_iter+1)) + 1/(N*np.arange(1,tot_iter+1)))) #is by O(sqrt(1/t +1/(Nt)))
 diego_scaling_fac_c = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
-diego_scaling_fac_d = np.sqrt((1/(np.arange(1,tot_iter+1)) + 1/(N*np.arange(1,tot_iter+1)))) #is by O(sqrt(1/t +1/(Nt)))
+# diego_scaling_fac_d = np.sqrt((1/(np.arange(1,tot_iter+1)) + 1/(N*np.arange(1,tot_iter+1)))) #is by O(sqrt(1/t +1/(Nt)))
 #%% Plot Results
 plt.figure()
 plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size),linestyle='dashed',linewidth=2)
 plt.semilogy(diego_scaling_fac_a, label='Scaling by O(1/(Nt))',linestyle='solid',linewidth=2)
-plt.semilogy(diego_scaling_fac_b, label='Scaling by O((1/t +1/(Nt)))',linestyle='solid',linewidth=2)
+# plt.semilogy(diego_scaling_fac_b, label='Scaling by O((1/t +1/(Nt)))',linestyle='solid',linewidth=2)
 plt.semilogy(diego_scaling_fac_c, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
-plt.semilogy(diego_scaling_fac_d, label='Scaling by O(sqrt(1/t +1/(Nt)))',linestyle='solid',linewidth=2)
+# plt.semilogy(diego_scaling_fac_d, label='Scaling by O(sqrt(1/t +1/(Nt)))',linestyle='solid',linewidth=2)
 plt.title('DIEGO 1-time scale with N= '+str(N)+' nodes and d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
