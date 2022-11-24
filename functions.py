@@ -21,19 +21,18 @@ def Column(x):
 
 
 ## This function generates pop covariance matrix only
-def data_gen_cov_mat(d,eig_vala,eig_valb):
+def data_gen_cov_mat(d,eig_gap_fac):
     # Using d=3 and a custom covariance matrix
     A = np.random.normal(0,1,(d,d))  # Generate random normal matrix of size d x d
     [u,sig,v] = np.linalg.svd(A) # Perform SVD decomposition of dxd
-    siga = (np.linspace(eig_vala,eig_valb,d)) # Re-define eigenvalues of A
+    siga = ((1-0.1)/(np.arange(1, d+1))**eig_gap_fac)+0.1  # Modify eigengap. large gap between \lamda_1 and \lambda_2 and less gap onwards
     At = u@np.diag(np.sqrt(siga))@v # Find \tilde{A} using new eigenvalues
     Sigma = np.matrix(At.T@At) # Find covariance matrix Sigma using \Sigma = \tilde{A}^T \tilde{A}
     eigv = np.linalg.eigh(Sigma) # Find eigenvalue decomposition of eigv
     ev = np.matrix(eigv[-1])  ## Fetch eigen vectors
     pca_vect = ev[:, -1]
-    # x = np.random.multivariate_normal(np.zeros(d), Sigma, n)
-    # pca_vect = Sigma[:,0]
-    return pca_vect,Sigma
+    eig_gap = siga[0]-siga[1]
+    return pca_vect,Sigma,np.round(eig_gap,3)
 
 # Generate Random connected Graph. Use laplacian matrix 2nd eigenvalue to check for connectedness.
 # The Erdos-Renyi Method

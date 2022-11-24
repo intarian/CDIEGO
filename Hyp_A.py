@@ -54,14 +54,11 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
     mean_err = np.squeeze(np.array(np.mean(err_n, axis=0)))
     return mean_err
 #%% Define Parameters
-# N = 10 # Set No. of Nodes, Each node gets one sample in single iteration
-d = 5 # Set dimensionality of data
-tot_iter = 1000 # Run for t iterations.
+d = 20 # Set dimensionality of data
+tot_iter = 10000 # Run for t iterations.
 step_size = 0.2
-eig_vala = 1
-eig_valb = 0.1
-eig_gap =  (eig_vala-eig_valb)/d #1 is largest eigval and 0.1 is smallest and there are d eigvalues so lambda_1 - lambda_2 = 0.9/d
-Node_count = [5,10,20]
+eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
+Node_count = [20,30]
 monte_carlo = 50
 #%% Compute true approximation (ignoring the scaling part)
 diego_scaling_true = 1/(np.sqrt((np.max(Node_count)*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
@@ -75,7 +72,7 @@ for nodes in range(0,len(Node_count)):
     diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
     for mon in range(0,monte_carlo):
         #%% Data Generation obtain covariance matrix and pca vector
-        [pca_vect, Sigma] = data_gen_cov_mat(d,eig_vala,eig_valb) # Generate Cov Matrix and true eig vec
+        [pca_vect, Sigma, eig_gap] = data_gen_cov_mat(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
         vti = np.random.normal(0,1,(d)) # Generate random eigenvector
         vti = Column(vti/np.linalg.norm(vti)) # unit normalize for selection over unit sphere
         #%% Generate data and distribute among N nodes. Each nodes gets 1 sample per iteration.
@@ -85,7 +82,7 @@ for nodes in range(0,len(Node_count)):
     diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
     #%% Plot Results
     # plt.figure()
-    plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+'N= '+str(N),linestyle='dashed',linewidth=2)
+    plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
     # plt.semilogy(diego_scaling_fac_c, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
     # plt.semilogy(diego_scaling_fac_d, label='Scaling by O(sqrt(1/t +1/(Nt)))',linestyle='solid',linewidth=2)
 plt.title('DIEGO 1-time scale with d= '+str(d))
