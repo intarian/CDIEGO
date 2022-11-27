@@ -48,17 +48,17 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
             v_n[:, i_n] = v_n[:, i_n] / np.linalg.norm(v_n[:, i_n], 2)
         # Compute Error for each iteration
         for i_n in range(0, N):
-            err_n[i_n, sample] = 1 - ((v_n[:, i_n].T @ pca_vect) ** 2) / (
-                        np.linalg.norm(v_n[:, i_n], 2) ** 2)
+            err_n[i_n, sample] = np.sqrt(1 - ((v_n[:, i_n].T @ pca_vect) ** 2) / (
+                        np.linalg.norm(v_n[:, i_n], 2) ** 2))
     # Compute mean error across all nodes at each iteration. For fully connected this is error across any node.
     mean_err = np.squeeze(np.array(np.mean(err_n, axis=0)))
     return mean_err
 #%% Define Parameters
-d = 20 # Set dimensionality of data
+d = 10 # Set dimensionality of data
 tot_iter = 10000 # Run for t iterations.
 step_size = 0.2
 eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
-Node_count = [20,30]
+Node_count = [20,30,40]
 monte_carlo = 50
 #%% Compute true approximation (ignoring the scaling part)
 diego_scaling_true = 1/(np.sqrt((np.max(Node_count)*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
@@ -71,6 +71,7 @@ for nodes in range(0,len(Node_count)):
     #%% Begin Monte Carlo simulation
     diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
     for mon in range(0,monte_carlo):
+        print('Currently Processing Nodes: ', N, ' of Monte Carlo: ',mon,' \n')
         #%% Data Generation obtain covariance matrix and pca vector
         [pca_vect, Sigma, eig_gap] = data_gen_cov_mat(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
         vti = np.random.normal(0,1,(d)) # Generate random eigenvector
@@ -89,4 +90,6 @@ plt.title('DIEGO 1-time scale with d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
+filename_fig = 'figures/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.jpg'
+plt.savefig(filename_fig)
 plt.show()
