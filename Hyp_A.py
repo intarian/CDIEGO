@@ -54,8 +54,8 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
     mean_err = np.squeeze(np.array(np.mean(err_n, axis=0)))
     return mean_err
 #%% Define Parameters
-d = 10 # Set dimensionality of data
-tot_iter = 10000 # Run for t iterations.
+d = 20 # Set dimensionality of data
+tot_iter = 5000 # Run for t iterations.
 step_size = 0.2
 eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
 Node_count = [20,30,40]
@@ -84,8 +84,6 @@ for nodes in range(0,len(Node_count)):
     #%% Plot Results
     # plt.figure()
     plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-    # plt.semilogy(diego_scaling_fac_c, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
-    # plt.semilogy(diego_scaling_fac_d, label='Scaling by O(sqrt(1/t +1/(Nt)))',linestyle='solid',linewidth=2)
 plt.title('DIEGO 1-time scale with d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
