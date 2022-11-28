@@ -80,9 +80,6 @@ def CDIEGO_HypB(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R):
         upd_n = np.matrix(np.zeros([d, N]))  # Store update values across all nodes for each sample
         # Begin loop to take sample from each node and update eigenvector estimate
         ## Calculate Communication Rounds
-        if (R<0):
-            Tmix = Tmix_calc(W_nf, N)
-            R = int(np.ceil(Tmix * (3/2) *np.log(N * (sample + 1))))  # sample+1 as sample starts from 0.
         for i_n in range(0, N):
             x_n = Column(x_samples_n[i_n, sample, :])  # Draw sample across node i_n
             vn = v_n[:, i_n]  # Draw current estimate of eigenvector across node i_n
@@ -107,15 +104,16 @@ def CDIEGO_HypB(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R):
     max_err = np.squeeze(np.array(np.max(err_n, axis=0)))
     return max_err # Give out max error among all nodes from q_1 instead of mean error.
 #%% Define Parameters
-d = 20 # Set dimensionality of data
-tot_iter = 5000 # Run for t iterations.
+d = 100 # Set dimensionality of data
+tot_iter = 1000 # Run for t iterations.
 step_size = 0.2
 eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
-N = 40 # no of nodes.
-monte_carlo = 50
-p = 0.1  # probability parameter to use for Erdos-Renyi graph generation.
+N = 30 # no of nodes.
+monte_carlo = 20
+p = 0.2  # probability parameter to use for Erdos-Renyi graph generation.
 #%% Compute true approximation (ignoring the scaling part)
-diego_scaling_true = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
+# diego_scaling_true = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
+diego_scaling_true = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) + np.arange(1,tot_iter+1)
 # %% Generate Fully Connected Graph for Hyp A (which assumes Federated Learning)
 W_f = np.matrix(1 / N * (np.ones((N, 1)) @ np.ones((N, 1)).T))
 #%% Generate Erdos-Renyi Graph weight matrix
@@ -123,9 +121,12 @@ A = gen_graph_adjacency(N, p)
 W_nf = W_gen_M(N, A)
 #%% Begin Monte Carlo simulation
 diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
-cdiego_fix_round_m = np.zeros((monte_carlo,tot_iter))
-cdiego_log_round_m = np.zeros((monte_carlo,tot_iter))
-R_fix = 10
+cdiego_round_m_a = np.zeros((monte_carlo,tot_iter))
+cdiego_round_m_b = np.zeros((monte_carlo,tot_iter))
+cdiego_round_m_c = np.zeros((monte_carlo,tot_iter))
+Tmix = Tmix_calc(W_nf, N)
+R_max = int(np.ceil((Tmix * 3/2 *np.log(N * (tot_iter)))))  # sample+1 as sample starts from 0.
+R_max
 for mon in range(0,monte_carlo):
     print('Currently Processing Nodes: ', N, ' of Monte Carlo: ',mon,' \n')
     #%% Data Generation obtain covariance matrix and pca vector
@@ -137,22 +138,34 @@ for mon in range(0,monte_carlo):
     #%% Run DIEGO Algorithm
     diego_f_cnnc_m[mon,:] = DIEGO_HypA(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
     #%% Run CDIEGO Algorithm
-    cdiego_fix_round_m[mon,:] = CDIEGO_HypB(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_fix)
-    cdiego_log_round_m[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, -1)
+    cdiego_round_m_a[mon,:] = CDIEGO_HypB(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_max-50)
+    cdiego_round_m_b[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max)
+    # cdiego_round_m_c[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max+50)
+#%% Take the mean of Monte-Carlo simulations
 diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
-cdiego_fix_round= np.squeeze(np.array(np.mean(cdiego_fix_round_m, axis=0)))
-cdiego_log_round= np.squeeze(np.array(np.mean(cdiego_log_round_m, axis=0)))
+cdiego_round_a= np.squeeze(np.array(np.mean(cdiego_round_m_a, axis=0)))
+cdiego_round_b= np.squeeze(np.array(np.mean(cdiego_round_m_b, axis=0)))
+# cdiego_round_c= np.squeeze(np.array(np.mean(cdiego_round_m_c, axis=0)))
 #%% Plot Results
 plt.figure()
-plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
+# plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
 plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_fix_round, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_fix),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_log_round, label='NFC log, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
+plt.semilogy(cdiego_round_a, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max-50),linestyle='dashed',linewidth=2)
+plt.semilogy(cdiego_round_b, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max),linestyle='dashed',linewidth=2)
+# plt.semilogy(cdiego_round_c, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max+50),linestyle='dashed',linewidth=2)
 plt.title('CDIEGO 2-time scale with d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
 x = int(np.round(np.random.random()*100,2)) # Assign random id to file to prevent overwriting
-filename_fig = 'figures/hypothesis_B_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(N)+'_fid_'+str(x)+'.jpg'
-plt.savefig(filename_fig)
+# filename_fig = 'figures/hypothesis_B_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(N)+'_fid_'+str(x)+'.jpg'
+# plt.savefig(filename_fig)
 plt.show()
+# #%% Plot log R curve
+# plt.figure()
+# Tmix = Tmix_calc(W_nf, N)
+# R = int(np.ceil(Tmix * (3/2) *np.log(N * (np.arange(1,tot_iter+1)))))  # sample+1 as sample starts from 0.
+# plt.title('Communication rounds increasing in log sense')
+# plt.ylabel('Comm Rounds')
+# plt.xlabel('No. of Iterations')
+# plt.show()
