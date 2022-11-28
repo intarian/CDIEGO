@@ -62,8 +62,8 @@ def gen_graph_adjacency(N,p):
                          3)  # use eigenvalsh from scipy to find eigenvalues of symmetric L matrix
             if (e[1] > 0):  # check if second eigenvalue (ascending order) is greater than zero, then it means graph is connected
                 return np.matrix(A)
-            else:
-                print('Graph Generation Failed. p value of ',p,' is too low. Trying again... \n')
+            # else:
+            #     print('Graph Generation Failed. p value of ',p,' is too low. Trying again... \n')
         else:
             return np.matrix([1])
 
@@ -130,7 +130,18 @@ def W_gen_M(N,A):
             W_M[i, i] = 1 - np.sum(W_M[i, :])
         # print('The weight matrix using Metropolis-Hasting method W_M is calculated as: \n \n', W_M)
         return np.matrix(W_M)
-
+#%% The function calculates Tmix (Mixing time of markov chain) according to
+# T_mix = max_i=1..N inf(t \in N) norm[W^t ei - 1/N 1^T]<1/2
+def Tmix_calc(W,N):
+    T_mix_i = np.zeros([N])
+    max_tmix = 10
+    for i in range(0,N):
+        for t in range(0,max_tmix):
+            W_e = W**t
+            if (np.linalg.norm(W_e[:, i] - (1 / N) * np.ones([N, 1]), 2) < 0.5):
+                T_mix_i[i] = t
+                break
+    return np.max(T_mix_i)
 #%% Begin DIEGO Algorithm
 # Introduction: This is a function of DIEGO algorithm. Implements 1 and 2 time scale algorithm.
 # if R=1, the algorithm is simply 1 time scale and if R>2 this becomes 2 time scale.
