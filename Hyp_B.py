@@ -104,13 +104,13 @@ def CDIEGO_HypB(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R):
     max_err = np.squeeze(np.array(np.max(err_n, axis=0)))
     return max_err # Give out max error among all nodes from q_1 instead of mean error.
 #%% Define Parameters
-d = 100 # Set dimensionality of data
-tot_iter = 1000 # Run for t iterations.
-step_size = 0.2
-eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
-N = 30 # no of nodes.
-monte_carlo = 20
-p = 0.2  # probability parameter to use for Erdos-Renyi graph generation.
+d = 50 # Set dimensionality of data
+tot_iter = 500 # Run for t iterations.
+step_size = 0.1
+eig_gap_fac =  6 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
+N = 100 # no of nodes.
+monte_carlo = 10
+p = 0.05  # probability parameter to use for Erdos-Renyi graph generation.
 #%% Compute true approximation (ignoring the scaling part)
 # diego_scaling_true = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
 diego_scaling_true = 1/(np.sqrt((N*np.arange(1,tot_iter+1)))) + np.arange(1,tot_iter+1)
@@ -125,8 +125,9 @@ cdiego_round_m_a = np.zeros((monte_carlo,tot_iter))
 cdiego_round_m_b = np.zeros((monte_carlo,tot_iter))
 cdiego_round_m_c = np.zeros((monte_carlo,tot_iter))
 Tmix = Tmix_calc(W_nf, N)
-R_max = int(np.ceil((Tmix * 3/2 *np.log(N * (tot_iter)))))  # sample+1 as sample starts from 0.
-R_max
+R_a = int(3/2*np.ceil((np.log(N * (tot_iter)))))  # sample+1 as sample starts from 0
+R_b = int(Tmix*np.ceil((np.log(N * (tot_iter)))))  # sample+1 as sample starts from 0
+R_max = int(Tmix*3/2*np.ceil((np.log(N * (tot_iter)))))  # sample+1 as sample starts from 0.
 for mon in range(0,monte_carlo):
     print('Currently Processing Nodes: ', N, ' of Monte Carlo: ',mon,' \n')
     #%% Data Generation obtain covariance matrix and pca vector
@@ -138,21 +139,21 @@ for mon in range(0,monte_carlo):
     #%% Run DIEGO Algorithm
     diego_f_cnnc_m[mon,:] = DIEGO_HypA(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
     #%% Run CDIEGO Algorithm
-    cdiego_round_m_a[mon,:] = CDIEGO_HypB(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_max-50)
-    cdiego_round_m_b[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max)
-    # cdiego_round_m_c[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max+50)
+    cdiego_round_m_a[mon,:] = CDIEGO_HypB(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_a)
+    cdiego_round_m_b[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_b)
+    cdiego_round_m_c[mon, :] = CDIEGO_HypB(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max)
 #%% Take the mean of Monte-Carlo simulations
 diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
 cdiego_round_a= np.squeeze(np.array(np.mean(cdiego_round_m_a, axis=0)))
 cdiego_round_b= np.squeeze(np.array(np.mean(cdiego_round_m_b, axis=0)))
-# cdiego_round_c= np.squeeze(np.array(np.mean(cdiego_round_m_c, axis=0)))
+cdiego_round_c= np.squeeze(np.array(np.mean(cdiego_round_m_c, axis=0)))
 #%% Plot Results
 plt.figure()
 # plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
 plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_round_a, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max-50),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_round_b, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max),linestyle='dashed',linewidth=2)
-# plt.semilogy(cdiego_round_c, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max+50),linestyle='dashed',linewidth=2)
+plt.semilogy(cdiego_round_a, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_a),linestyle='dashed',linewidth=2)
+plt.semilogy(cdiego_round_b, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_b),linestyle='dashed',linewidth=2)
+plt.semilogy(cdiego_round_c, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max),linestyle='dashed',linewidth=2)
 plt.title('CDIEGO 2-time scale with d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')

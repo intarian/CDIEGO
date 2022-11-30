@@ -55,21 +55,20 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
     return mean_err
 #%% Define Parameters
 d = 20 # Set dimensionality of data
-tot_iter = 5000 # Run for t iterations.
+tot_iter = 10000 # Run for t iterations.
 step_size = 0.2
-eig_gap_fac =  0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
+eig_gap_fac = 0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
 Node_count = [20,30,40]
 monte_carlo = 50
-#%% Compute true approximation (ignoring the scaling part)
-diego_scaling_true = 1/(np.sqrt((np.max(Node_count)*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
-plt.figure()
-plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
+#%% Initialize empty tensor to store values of nodes and monte carlo simulations against total iteration
+diego_f_cnnc_mn = np.zeros((len(Node_count),monte_carlo,tot_iter))
+#%% Run loop to compute node monte carlo simulations
 for nodes in range(0,len(Node_count)):
     N = Node_count[nodes]
-    # %% Generate Fully Connected Graph for Hyp A (which assumes Federated Learning)
+    #%% Generate Fully Connected Graph for Hyp A (which assumes Federated Learning)
     W_f = np.matrix(1 / N * (np.ones((N, 1)) @ np.ones((N, 1)).T))
     #%% Begin Monte Carlo simulation
-    diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
+    # diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
     for mon in range(0,monte_carlo):
         print('Currently Processing Nodes: ', N, ' of Monte Carlo: ',mon,' \n')
         #%% Data Generation obtain covariance matrix and pca vector
@@ -79,15 +78,34 @@ for nodes in range(0,len(Node_count)):
         #%% Generate data and distribute among N nodes. Each nodes gets 1 sample per iteration.
         x_samples = np.random.multivariate_normal(np.zeros(d), Sigma,N*tot_iter)
         #%% Run DIEGO Algorithm for Hyp A
-        diego_f_cnnc_m[mon,:] = DIEGO_HypA(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
-    diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
-    #%% Plot Results
-    # plt.figure()
-    plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
+        # diego_f_cnnc_m[mon,:] = DIEGO_HypA(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
+        diego_f_cnnc_mn[nodes,mon, :] = DIEGO_HypA(W_f, N, d, vti, tot_iter, x_samples, pca_vect, step_size)
+#%% Compute Mean against each node data
+# diego_f_cnnc= np.squeeze(np.array(np.mean(diego_f_cnnc_mn[], axis=0)))
+#%% Plot Results
+# True scaling for max No of nodes
+diego_scaling_true = 1/(np.sqrt((np.max(Node_count)*np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
+plt.figure()
+# Plot true scaling
+plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
+# Plot nodes mean data against monte carlo simulations
+for nodes in range(0,len(Node_count)):
+    diego_f_cnnc = np.squeeze(np.array(np.mean(diego_f_cnnc_mn[nodes,:,:], axis=0)))
+    plt.semilogy(diego_f_cnnc, label='FC, StepSize='+str(step_size)+', N= '+str(Node_count[nodes])+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
 plt.title('DIEGO 1-time scale with d= '+str(d))
 plt.ylabel('Mean Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
-filename_fig = 'figures/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.jpg'
-plt.savefig(filename_fig)
+# filename_fig = 'figures/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.jpg'
+# plt.savefig(filename_fig)
+plt.show()
+#%% Save the data
+filename_data = 'sim_data/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.npy'
+np.save(filename_data, diego_f_cnnc_mn)
+#%% Check scaling by sqrt(N2/N1)
+diego_f_cnnc_ma = np.squeeze(np.array(np.mean(diego_f_cnnc_mn[1,:,:], axis=0)))
+diego_f_cnnc_mb = np.squeeze(np.array(np.mean(diego_f_cnnc_mn[2,:,:], axis=0)))
+x = diego_f_cnnc_ma/diego_f_cnnc_mb
+plt.figure()
+plt.plot(x)
 plt.show()
