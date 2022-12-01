@@ -55,7 +55,7 @@ def DIEGO_HypA(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
     return mean_err
 #%% Define Parameters
 d = 20 # Set dimensionality of data
-tot_iter = 10000 # Run for t iterations.
+tot_iter = 50000 # Run for t iterations.
 step_size = 0.2
 eig_gap_fac = 0.23 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
 Node_count = [20,30,40]
