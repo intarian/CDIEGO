@@ -19,10 +19,8 @@ def Column(x):
 #     # pca_vect = Sigma[:,0]
 #     return x,pca_vect,Sigma
 
-
 ## This function generates pop covariance matrix only
-def data_gen_cov_mat(d,eig_gap_fac):
-    # Using d=3 and a custom covariance matrix
+def data_cov_mat_gen(d,eig_gap_fac):
     A = np.random.normal(0,1,(d,d))  # Generate random normal matrix of size d x d
     [u,sig,v] = np.linalg.svd(A) # Perform SVD decomposition of dxd
     siga = ((1-0.1)/(np.arange(1, d+1))**eig_gap_fac)+0.1  # Modify eigengap. large gap between \lamda_1 and \lambda_2 and less gap onwards
