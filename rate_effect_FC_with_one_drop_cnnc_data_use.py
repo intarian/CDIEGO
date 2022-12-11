@@ -23,11 +23,11 @@ R_max_f = 15
 R_max_af = 1
 R_max_erdos = 90
 #%% Load All Results
-diego_f_cnnc_m = np.load('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+diego_f_cnnc_m = np.load('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_diego) + '_mc_' + str(monte_carlo)+ '_R_'+str(R_max_f) + '_FC_'+'.npy')
-cdiego_af_cnnc_m = np.load('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_af_cnnc_m = np.load('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_cdiego_af) + '_mc_' + str(monte_carlo)+ '_R_'+str(R_max_af) + '_AF_'+'.npy')
-cdiego_erdos_cnnc_m = np.load('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_erdos_cnnc_m = np.load('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_cdiego_af) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max_erdos)+ '_Erdos_'+'.npy')
 #%% Compute Mean accross all Monte Carlo Simulations
 diego_f_cnnc = np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))

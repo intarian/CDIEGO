@@ -98,7 +98,7 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     diego_f_cnnc_mn = np.concatenate(result,axis=0) # Join the values from result run across multi workers
-    filename_data = 'sim_data/MP_hypothesis_A_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+    filename_data = 'sim_data_old/MP_hypothesis_A_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '.npy'
     np.save(filename_data, diego_f_cnnc_mn)
 print("--- %s seconds ---" % (time.time() - start_time))

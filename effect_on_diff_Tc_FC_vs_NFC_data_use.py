@@ -1,36 +1,36 @@
 #%% Import Libraries
 import numpy as np
 from matplotlib import pyplot as plt
-plt.rcParams['text.usetex'] = True
+plt.rcParams['text.usetex'] = False
 #%% Load All Results
 ## Define Parameters:
-d = 4 # Set dimensionality of data
-tot_iter = 50*1000 # Run for t iterations.
+d = 20 # Set dimensionality of data
+tot_iter = 50*10 # Run for t iterations.
 eig_gap_fac = 2 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
-N = 10
-monte_carlo = 100
-step_size = 0.2
+N = 40
+monte_carlo = 10
+step_size = 0.05
 ## The following parameters can be set using filenames in the folder. Do this manually
-R_a = 4
-R_b = 14
-R_c = 53
-R_max = 79
+R_a = 6
+R_b = 10
+R_c = 60
+R_max = 90
 R_d = R_max + 10
 ## Compute eigengap
 siga = ((1-0.1)/(np.arange(1, d+1))**eig_gap_fac)+0.1
 eig_gap = np.round(siga[0]-siga[1],3)
 #%% Load All Results
-diego_f_cnnc_m = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+diego_f_cnnc_m = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_FC_'+'.npy')
-cdiego_f_cnnc_m_a = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_f_cnnc_m_a = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_a)+'_NFCa_'+'.npy')
-cdiego_f_cnnc_m_b = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_f_cnnc_m_b = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_b)+'_NFCb_'+'.npy')
-cdiego_f_cnnc_m_c = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_f_cnnc_m_c = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_c)+'_NFCc_'+'.npy')
-cdiego_f_cnnc_m_rmax = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_f_cnnc_m_rmax = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max)+'_NFCmax_'+'.npy')
-cdiego_f_cnnc_m_d = np.load('C:/Users/zulqa/PycharmProjects/SigProcMP/sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_f_cnnc_m_d = np.load('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_d)+'_NFCd_'+'.npy')
 #%% Compute Mean accross all Monte Carlo Simulations
 diego_f_cnnc = np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
@@ -44,7 +44,7 @@ plt.figure()
 # plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
 # Plot the curve
 start_t = 0
-end_t = 1000
+end_t = tot_iter
 plt.semilogy(diego_f_cnnc[start_t:end_t], label='DIEGO, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=1)
 # plt.semilogy(cdiego_f_cnnc_a[start_t:end_t], label='CDIEGO, Tc = '+str(R_a) + ' ($T_{mix}$)' + ' StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
 # plt.semilogy(cdiego_f_cnnc_b[start_t:end_t], label='CDIEGO, Tc = '+str(R_b)+ ' ($\log(Nt)$)'+' StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
@@ -57,9 +57,9 @@ plt.xlabel('No. of Iterations')
 plt.legend()
 plt.show()
 #%% check the convergence error rate
-tt = 50*1000 - 1
-print(cdiego_f_cnnc_d[tt])
-print(cdiego_f_cnnc_rmax[tt])
-print(diego_f_cnnc[tt])
-print(1/np.sqrt(tt*N))
+# tt = 50*1000 - 1
+# print(cdiego_f_cnnc_d[tt])
+# print(cdiego_f_cnnc_rmax[tt])
+# print(diego_f_cnnc[tt])
+# print(1/np.sqrt(tt*N))
 

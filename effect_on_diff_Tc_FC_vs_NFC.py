@@ -56,7 +56,12 @@ def CDIEGO_Hyp_Tc(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
             upd_n = upd_n @ W
         # After updating upd_n data. The next thing is to scale it by W^R instead of N.
         W_e1 = (W ** Tc)
-        W_e1 = W_e1[:, 0] + 1e-100 # as we are taking first column only. We need to add small eps to avoid scaling by 1/0
+        if (W_e1[:, 0] == 0).any():
+            print(W)
+            print('Failed to run. Weight matrix has a zero. Try increasing Tmix')
+            break
+        else:
+            W_e1 = W_e1[:, 0] # + 1e-100 # as we are taking first column only. We need to add small eps to avoid scaling by 1/0
         # Update eigenvector estimate
         for i_n in range(0, N):
             v_n[:, i_n] = v_n[:, i_n] + gamma_ext * (upd_n[:, i_n]) / (W_e1[i_n]).item()
@@ -72,20 +77,20 @@ def CDIEGO_Hyp_Tc(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
 
 #%% Begin Main Implementation
 ## Define Parameters:
-d = 4 # Set dimensionality of data
-tot_iter = 50*100 # Run for t iterations.
+d = 20 # Set dimensionality of data
+tot_iter = 50*1000 # Run for t iterations.
 eig_gap_fac = 2 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
-N = 10
-monte_carlo = 10
+N = 40
+monte_carlo = 100
 p = 0.1 # Parameter for Erdos-Reyni Convergence
-step_size = 0.2
+step_size = 0.05
 #%% Initialize empty tensor to store values of nodes and monte carlo simulations against total iteration
 diego_f_cnnc_m = np.zeros((monte_carlo,tot_iter))
 # Each a b c arrays created below will save different values of Tc
 cdiego_f_cnnc_m_a = np.zeros((monte_carlo,tot_iter))
 cdiego_f_cnnc_m_b = np.zeros((monte_carlo,tot_iter))
-cdiego_f_cnnc_m_c = np.zeros((monte_carlo,tot_iter))
-cdiego_f_cnnc_m_d = np.zeros((monte_carlo,tot_iter))
+# cdiego_f_cnnc_m_c = np.zeros((monte_carlo,tot_iter))
+# cdiego_f_cnnc_m_d = np.zeros((monte_carlo,tot_iter))
 cdiego_f_cnnc_m_rmax = np.zeros((monte_carlo,tot_iter))
 #%% Use fixed covariance matrix for all number of nodes and monte carlo simulations
 [pca_vect, Sigma, eig_gap] = data_cov_mat_gen(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
@@ -104,58 +109,51 @@ R_b = int(np.ceil((np.log(N * (tot_iter)))))
 R_c = int(np.ceil((Tmix*np.log(N * (tot_iter)))))
 R_max = int(np.ceil(Tmix*(3/2)*(np.log(N * tot_iter))))
 R_d = R_max + 10
-#%% Different Step Size for algorithms
-ss_diego = 0.3
-ss_cdiego_a = 0.3
-ss_cdiego_b = 0.3
-ss_cdiego_c = 0.3
-ss_cdiego_rmax = 0.3
-ss_cdiego_d = 0.3
 #%% Begin Monte-Carlo Simulation Rounds
 for mon in range(0,monte_carlo):
     print('Currently Processing Nodes: ', N, ' of Monte Carlo: ',mon,'\n')
     #%% Generate data and distribute among N nodes. Each nodes gets 1 sample per iteration. Using covariance Mat
     x_samples = np.random.multivariate_normal(np.zeros(d), Sigma,N*tot_iter)
     #%% Run DIEGO Algorithm
-    diego_f_cnnc_m[mon,:] = DIEGO_Hyp_Tc(W_f,N,d,vti,tot_iter,x_samples,pca_vect,ss_diego)
+    diego_f_cnnc_m[mon,:] = DIEGO_Hyp_Tc(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
     #%% Run CDIEGO Algorithm with different communication rounds
-    # cdiego_f_cnnc_m_a[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,ss_cdiego_a,R_a)
-    # cdiego_f_cnnc_m_b[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,ss_cdiego_a,R_b)
-    cdiego_f_cnnc_m_c[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,ss_cdiego_b,R_c)
-    cdiego_f_cnnc_m_rmax[mon, :] = CDIEGO_Hyp_Tc(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, ss_cdiego_rmax, R_max)
-    cdiego_f_cnnc_m_d[mon, :] = CDIEGO_Hyp_Tc(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, ss_cdiego_d, R_d)
+    cdiego_f_cnnc_m_a[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_a)
+    cdiego_f_cnnc_m_b[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_b)
+    # cdiego_f_cnnc_m_c[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,R_c)
+    cdiego_f_cnnc_m_rmax[mon, :] = CDIEGO_Hyp_Tc(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_max)
+    # cdiego_f_cnnc_m_d[mon, :] = CDIEGO_Hyp_Tc(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, R_d)
 #%% Save All Results
-# np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
-#         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_FC_'+'.npy', diego_f_cnnc_m)
-# np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
-#         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_a)+'_NFCa_'+'.npy', cdiego_f_cnnc_m_a)
-# np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
-#         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_b)+'_NFCb_'+'.npy', cdiego_f_cnnc_m_b)
+np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+        N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_FC_'+'.npy', diego_f_cnnc_m)
+np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+        N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_a)+'_NFCa_'+'.npy', cdiego_f_cnnc_m_a)
+np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+        N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_b)+'_NFCb_'+'.npy', cdiego_f_cnnc_m_b)
 # np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
 #         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_c)+'_NFCc_'+'.npy', cdiego_f_cnnc_m_c)
-# np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
-#         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max)+'_NFCmax_'+'.npy', cdiego_f_cnnc_m_rmax)
+np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+        N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max)+'_NFCmax_'+'.npy', cdiego_f_cnnc_m_rmax)
 # np.save('sim_data/dff_Tc_DvsCD_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
 #         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_R_'+str(R_d)+'_NFCd_'+'.npy', cdiego_f_cnnc_m_d)
 #%% Compute Mean accross all Monte Carlo Simulations
 diego_f_cnnc = np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))
-# cdiego_f_cnnc_a = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_a, axis=0)))
-# cdiego_f_cnnc_b = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_b, axis=0)))
-cdiego_f_cnnc_c = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_c, axis=0)))
+cdiego_f_cnnc_a = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_a, axis=0)))
+cdiego_f_cnnc_b = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_b, axis=0)))
+# cdiego_f_cnnc_c = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_c, axis=0)))
 cdiego_f_cnnc_rmax = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_rmax, axis=0)))
-cdiego_f_cnnc_d = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_d, axis=0)))
+# cdiego_f_cnnc_d = np.squeeze(np.array(np.mean(cdiego_f_cnnc_m_d, axis=0)))
 #%% Plot Results
-plt.figure()
+# plt.figure()
 # plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
-# Plot the curve
-plt.semilogy(diego_f_cnnc, label='DIEGO, StepSize='+str(ss_diego)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
+# ## Plot the curve
+# plt.semilogy(diego_f_cnnc, label='DIEGO, StepSize='+str(ss_diego)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
 # plt.semilogy(cdiego_f_cnnc_a, label='CDIEGO, Tc = '+str(R_a)+' StepSize='+str(ss_cdiego_a)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
 # plt.semilogy(cdiego_f_cnnc_b, label='CDIEGO, Tc = '+str(R_b)+' StepSize='+str(ss_cdiego_b)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_f_cnnc_c, label='CDIEGO, Tc = '+str(R_c)+' StepSize='+str(ss_cdiego_c)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='solid',linewidth=2)
-plt.semilogy(cdiego_f_cnnc_rmax, label='CDIEGO, Tc = '+str(R_max)+' StepSize='+str(ss_cdiego_rmax)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_f_cnnc_d, label='CDIEGO, Tc = '+str(R_d)+' StepSize='+str(ss_cdiego_d)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='solid',linewidth=2)
-plt.title('DIEGO vs CDIEOG with diff stepsize with d= '+str(d))
-plt.ylabel('Error')
-plt.xlabel('No. of Iterations')
-plt.legend()
-plt.show()
+# plt.semilogy(cdiego_f_cnnc_c, label='CDIEGO, Tc = '+str(R_c)+' StepSize='+str(ss_cdiego_c)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='solid',linewidth=2)
+# plt.semilogy(cdiego_f_cnnc_rmax, label='CDIEGO, Tc = '+str(R_max)+' StepSize='+str(ss_cdiego_rmax)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
+# plt.semilogy(cdiego_f_cnnc_d, label='CDIEGO, Tc = '+str(R_d)+' StepSize='+str(ss_cdiego_d)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='solid',linewidth=2)
+# plt.title('DIEGO vs CDIEOG with diff stepsize with d= '+str(d))
+# plt.ylabel('Error')
+# plt.xlabel('No. of Iterations')
+# plt.legend()
+# plt.show()

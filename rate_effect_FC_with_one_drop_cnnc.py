@@ -122,11 +122,11 @@ for mon in range(0,monte_carlo):
     cdiego_af_cnnc_m[mon,:] = CDIEGO_Hyp_Tc(W_af,N,d,vti,tot_iter,x_samples,pca_vect,ss_cdiego_af,R_max_af)
     cdiego_erdos_cnnc_m[mon,:] = CDIEGO_Hyp_Tc(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,ss_cdiego_erdos,R_max_erdos)
 #%% Save All Results
-np.save('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_diego) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max_f) +'_FC_'+'.npy', diego_f_cnnc_m)
-np.save('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_cdiego_af) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max_af) + '_AF_'+'.npy', cdiego_af_cnnc_m)
-np.save('sim_data/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/AFvFvErdos_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
          N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(ss_cdiego_af) + '_mc_' + str(monte_carlo) + '_R_'+str(R_max_erdos) +'_Erdos_'+'.npy', cdiego_erdos_cnnc_m)
 #%% Compute Mean accross all Monte Carlo Simulations
 diego_f_cnnc = np.squeeze(np.array(np.mean(diego_f_cnnc_m, axis=0)))

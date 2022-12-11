@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Simulations Data
-#sim_data/
+#sim_data_old/
 
 # C extensions
 *.so

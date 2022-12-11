@@ -100,7 +100,7 @@ plt.legend()
 # plt.savefig(filename_fig)
 plt.show()
 #%% Save the data
-filename_data = 'sim_data/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.npy'
+filename_data = 'sim_data_old/hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(Node_count)+'.npy'
 np.save(filename_data, diego_f_cnnc_mn)
 #%% Check scaling by sqrt(N2/N1)
 diego_f_cnnc_ma = np.squeeze(np.array(np.mean(diego_f_cnnc_mn[1,:,:], axis=0)))

@@ -115,13 +115,13 @@ cdiego_round_b_Tc[:,1] = R_b
 cdiego_round_c_Tc[:,0] = cdiego_round_c
 cdiego_round_c_Tc[:,1] = R_max
 #%% Save results
-np.save('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_FC_'+'.npy', diego_f_cnnc_Tc)
-np.save('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCa_'+'.npy', cdiego_round_a_Tc)
-np.save('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCb_'+'.npy', cdiego_round_b_Tc)
-np.save('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+np.save('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCc_'+'.npy', cdiego_round_c_Tc)
 #%% Plot Results
 plt.figure()

@@ -19,15 +19,15 @@ monte_carlo = 10
 siga = ((1-0.1)/(np.arange(1, d+1))**eig_gap_fac)+0.1
 eig_gap = np.round(siga[0]-siga[1],3)
 #%% Load Data
-diego_f_cnnc_Tc = np.load('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+diego_f_cnnc_Tc = np.load('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_FC_'+'.npy')
-diego_f_cnnc_mp = np.load('sim_data/MP_hypothesis_A_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+diego_f_cnnc_mp = np.load('sim_data_old/MP_hypothesis_A_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '.npy')
-cdiego_round_a_Tc = np.load('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_round_a_Tc = np.load('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCa_'+'.npy')
-cdiego_round_b_Tc = np.load('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_round_b_Tc = np.load('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCb_'+'.npy')
-cdiego_round_c_Tc = np.load('sim_data/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
+cdiego_round_c_Tc = np.load('sim_data_old/graph_hyp_test_iter_count_' + str(tot_iter) + '_dimdata_' + str(d) + '_nodes_' + str(
         N) + '_eg_' + str(eig_gap_fac) + '_ss_' + str(step_size) + '_mc_' + str(monte_carlo) + '_NFCc_'+'.npy')
 #%% Fetch Data and Consensus Rounds value
 diego_f_cnnc = diego_f_cnnc_Tc[:,0]

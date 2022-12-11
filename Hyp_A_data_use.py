@@ -17,7 +17,7 @@ siga = ((1-0.1)/(np.arange(1, d+1))**eig_gap_fac)+0.1
 eig_gap = np.round(siga[0]-siga[1],3)
 N = 10
 monte_carlo = 10
-filename_data = 'sim_data/MP_hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(N)+'_eg_'+str(eig_gap_fac)+'_ss_'+str(step_size)+'_mc_'+str(monte_carlo)+'.npy'
+filename_data = 'sim_data_old/MP_hypothesis_A_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(N)+'_eg_'+str(eig_gap_fac)+'_ss_'+str(step_size)+'_mc_'+str(monte_carlo)+'.npy'
 diego_f_cnnc_mn = np.load(filename_data)
 #%% Plot Results
 diego_scaling_true = 1/(np.sqrt((np.arange(1,tot_iter+1)))) # is scaling only by O(1/sqrt(Nt))
