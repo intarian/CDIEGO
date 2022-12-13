@@ -79,9 +79,9 @@ def CDIEGO_Hyp_Tc(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
 ## Define Parameters:
 d = 20 # Set dimensionality of data
 tot_iter = 50*1000 # Run for t iterations.
-eig_gap_fac = 2 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
+eig_gap_fac = 1 #Controls the factor of eigengap. See function data_gen_cov_mat in functions.py
 N = 40
-monte_carlo = 100
+monte_carlo = 50
 p = 0.1 # Parameter for Erdos-Reyni Convergence
 step_size = 0.05
 #%% Initialize empty tensor to store values of nodes and monte carlo simulations against total iteration
