@@ -165,6 +165,7 @@ if __name__ == '__main__':
         # range(35, 40),
         # range(40, 45),
         # range(45, 50)
+
         # ## 10 Monte Carlo
         # range(0, 1),
         # range(1, 2)
@@ -178,42 +179,27 @@ if __name__ == '__main__':
         # # range(9, 10)
 
         ## 30 Monte Carlo
-        range(0, 1),
-        range(1, 2),
-        range(2, 3),
-        range(3, 4),
-        range(4, 5),
-        range(5, 6),
-        range(6, 7),
-        range(7, 8),
-        range(8, 9),
-        range(9, 10),
-        range(10, 11),
-        range(11, 12),
-        range(12, 13),
-        range(13, 14),
-        range(14, 15),
-        range(15, 16),
-        range(16, 17),
-        range(17, 18),
-        range(18, 19),
-        range(19, 20),
-        range(20, 21),
-        range(21, 22),
-        range(22, 23),
-        range(23, 24),
-        range(24, 25),
-        range(25, 26),
-        range(26, 27),
-        range(27, 28),
-        range(28, 29),
-        range(29, 30)
+        range(0, 2),
+        range(2, 4),
+        range(4, 6),
+        range(6, 8),
+        range(8, 10),
+        range(10, 12),
+        range(12, 14),
+        range(14, 16),
+        range(16, 18),
+        range(18, 20),
+        range(20, 22),
+        range(22, 24),
+        range(24, 26),
+        range(26, 28),
+        range(28, 30)
     ]
     # Create a threadpool with N threads
     ## This code just parallelize each function at a time. So after DIEGO it executes CDIEGO and so on.
     ## Simultaneously parallelization of all three cases is not yet achieved.
     print('Starting MP process')
-    pool = mp.Pool(30)
+    pool = mp.Pool(15)
     result_DIEGO = pool.map(monte_carlo_mp_DIEGO, ranges)
     result_CDIEGO_Ra = pool.map(monte_carlo_mp_CDIEGO_Ra, ranges)
     result_CDIEGO_Rmax = pool.map(monte_carlo_mp_CDIEGO_Rmax, ranges)

@@ -25,19 +25,24 @@ cdiego_result_Rmax = np.squeeze(np.array(np.mean(diego_cdiego_mnist[2,:,:], axis
 #%% Plot Results
 plt.figure()
 # plt.semilogy(diego_scaling_true, label='Scaling by O(1/sqrt(Nt))',linestyle='solid',linewidth=2)
-plt.semilogy(diego_result, label='MNIST DIEGO, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_result_Ra, label='MNIST CDIEGO Ra, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
-plt.semilogy(cdiego_result_Rmax, label='MNIST CDIEGO Rmax, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
+# plt.semilogy(diego_result, label='MNIST DIEGO, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
+# plt.semilogy(cdiego_result_Ra, label='MNIST CDIEGO Ra, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
+# plt.semilogy(cdiego_result_Rmax, label='MNIST CDIEGO Rmax, StepSize='+str(step_size)+', N= '+str(N),linestyle='dashed',linewidth=2)
 # diego_f_cnnc_mp = np.squeeze(np.array(np.mean(diego_f_cnnc_mp, axis=0)))
-# plt.semilogy(diego_f_cnnc_mp, label='FCD, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap),linestyle='dashed',linewidth=2)
-# plt.semilogy(cdiego_round_a, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_a),linestyle='dashed',linewidth=2)
-# plt.semilogy(cdiego_round_b, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_b),linestyle='dashed',linewidth=2)
-# plt.semilogy(cdiego_round_c, label='NFC, StepSize='+str(step_size)+', N= '+str(N)+', gap= '+str(eig_gap)+', R= '+str(R_max),linestyle='dashed',linewidth=2)
-plt.title('DIEGO with MNIST with d= '+str(d)+' MC ='+str(monte_carlo))
-plt.ylabel('Mean Error')
+
+
+
+start_t = 0
+end_t = tot_iter
+markers_on = (np.ceil(np.linspace(start_t+1,end_t-1,5))).astype(int)
+plt.semilogy(diego_result, label='SC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_result_Ra, label='WC, Tc = '+ ' $\log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_on.tolist())
+# plt.semilogy(cdiego_result_Rmax, label='WC, Tc = '+ ' $T_{mix} 3/2 \log(Nt)$',linestyle='dashed',linewidth=1,marker='>',markersize=7, markevery=markers_on.tolist())
+markers_cdiego = (np.ceil(np.linspace(start_t+1000,end_t-1000,5))).astype(int)
+plt.semilogy(cdiego_result_Rmax, label='WC, Tc = '+ ' ($T_{mix} 3/2 \log(Nt)$)',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
+# plt.title(')
+plt.ylabel('Max Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
-# x = int(np.round(np.random.random()*100,2)) # Assign random id to file to prevent overwriting
-# filename_fig = 'figures/hypothesis_B_iter_count_'+str(tot_iter)+'_dimdata_'+str(d)+'_nodes_'+str(N)+'_fid_'+str(x)+'.jpg'
-# plt.savefig(filename_fig)
+plt.savefig('figures/MNIST_FC_NFC_diff_TC.eps')
 plt.show()
