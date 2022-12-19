@@ -1,0 +1,4 @@
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 23564830.0 ON hal0076 CANCELLED AT 2022-12-16T21:18:28 ***
+slurmstepd: error: *** JOB 23564830 ON hal0076 CANCELLED AT 2022-12-16T21:18:28 ***
+slurmstepd: error: Detected 24 oom-kill event(s) in step 23564830.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
