@@ -47,11 +47,11 @@ from scipy.interpolate import make_interp_spline
 start_t = 0
 end_t = tot_iter
 markers_on = (np.ceil(np.linspace(start_t+1,end_t-1,5))).astype(int)
-plt.semilogy(diego_f_cnnc[start_t:end_t], label='SC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
-plt.semilogy(cdiego_f_cnnc_a[start_t:end_t], label='WC, Tc = '+ ' ($T_{mix}$)',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_on.tolist())
-plt.semilogy(cdiego_f_cnnc_b[start_t:end_t], label='WC, Tc = '+ ' ($\log(Nt)$)',linestyle='dashed',linewidth=1,marker='>',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(diego_f_cnnc[start_t:end_t], label='FC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_f_cnnc_a[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix}$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_f_cnnc_b[start_t:end_t], label='NFC, Tc = '+ ' $\log(Nt)$',linestyle='dashed',linewidth=1,marker='>',markersize=7, markevery=markers_on.tolist())
 markers_cdiego = (np.ceil(np.linspace(start_t+5000,end_t-5000,5))).astype(int)
-plt.semilogy(cdiego_f_cnnc_rmax[start_t:end_t], label='WC, Tc = '+ ' ($T_{mix} 3/2 \log(Nt)$)',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
+plt.semilogy(cdiego_f_cnnc_rmax[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
 # plt.title(')
 plt.ylabel('Max Error')
 plt.xlabel('No. of Iterations')
