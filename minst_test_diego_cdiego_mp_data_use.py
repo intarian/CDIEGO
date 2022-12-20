@@ -41,7 +41,7 @@ plt.semilogy(cdiego_result_Ra, label='NFC, Tc = '+ ' $\log(Nt)$',linestyle='dash
 markers_cdiego = (np.ceil(np.linspace(start_t+1000,end_t-1000,5))).astype(int)
 plt.semilogy(cdiego_result_Rmax, label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
 # plt.title(')
-plt.ylabel('Max Error')
+plt.ylabel('Average Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
 plt.savefig('figures/MNIST_FC_NFC_diff_TC.eps')

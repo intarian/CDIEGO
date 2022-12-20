@@ -53,7 +53,7 @@ plt.semilogy(cdiego_f_cnnc_b[start_t:end_t], label='NFC, Tc = '+ ' $\log(Nt)$',l
 markers_cdiego = (np.ceil(np.linspace(start_t+5000,end_t-5000,5))).astype(int)
 plt.semilogy(cdiego_f_cnnc_rmax[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
 # plt.title(')
-plt.ylabel('Max Error')
+plt.ylabel('Average Error')
 plt.xlabel('No. of Iterations')
 plt.legend()
 plt.savefig('figures/FC_NFC_diff_TC.eps')
