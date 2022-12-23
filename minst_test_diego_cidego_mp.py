@@ -93,7 +93,7 @@ pca_vect = ev[:, -1]
 
 #%% Load Additional Parameters
 N = 10
-monte_carlo = 30
+monte_carlo = 50
 p = 0.1 # Parameter for Erdos-Reyni Convergence
 step_size = 0.01
 tot_data_samples = 60000
@@ -179,27 +179,13 @@ if __name__ == '__main__':
         # # range(9, 10)
 
         ## 30 Monte Carlo
-        range(0, 2),
-        range(2, 4),
-        range(4, 6),
-        range(6, 8),
-        range(8, 10),
-        range(10, 12),
-        range(12, 14),
-        range(14, 16),
-        range(16, 18),
-        range(18, 20),
-        range(20, 22),
-        range(22, 24),
-        range(24, 26),
-        range(26, 28),
-        range(28, 30)
+        range(0, 50)
     ]
     # Create a threadpool with N threads
     ## This code just parallelize each function at a time. So after DIEGO it executes CDIEGO and so on.
     ## Simultaneously parallelization of all three cases is not yet achieved.
     print('Starting MP process')
-    pool = mp.Pool(15)
+    pool = mp.Pool(1)
     result_DIEGO = pool.map(monte_carlo_mp_DIEGO, ranges)
     result_CDIEGO_Ra = pool.map(monte_carlo_mp_CDIEGO_Ra, ranges)
     result_CDIEGO_Rmax = pool.map(monte_carlo_mp_CDIEGO_Rmax, ranges)
