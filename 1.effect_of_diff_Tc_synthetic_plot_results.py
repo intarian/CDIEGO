@@ -1,0 +1,39 @@
+#%% Import Libraries
+import numpy as np
+from matplotlib import pyplot as plt
+plt.rcParams['text.usetex'] = False
+## Load Parameters:
+param = np.load('sim_data/1.eff_Tc_DvsCD_params_mp.npy')
+d = int(param[0,0]) # Load dimensionality of data
+tot_iter = int(param[1,0]) # Load no. of iterations
+N = param[2,0] # Load No of Nodes
+monte_carlo = param[3,0] # Load no. of monte carlo runs
+p = param[4,0] # Load Parameter for Erdos-Reyni Convergence
+step_size = param[5,0] # Load step size
+eigen_gap = param[6,0] # Load eigengap
+## Load data of Consensus Rounds
+T_a = param[7,0]
+T_b = param[8,0]
+T_opt = param[9,0]
+#%% Load Data Result
+diego_cdiego_m = np.load('sim_data/1.eff_Tc_DvsCD_data_mp.npy')
+#%% Compute Mean accross all Monte Carlo Simulations
+diego_m = np.squeeze(np.array(np.mean(diego_cdiego_m[0,:,:], axis=0)))
+cdiego_m_Ta = np.squeeze(np.array(np.mean(diego_cdiego_m[1,:,:], axis=0)))
+cdiego_m_Tb = np.squeeze(np.array(np.mean(diego_cdiego_m[2,:,:], axis=0)))
+cdiego_m_T_opt = np.squeeze(np.array(np.mean(diego_cdiego_m[3,:,:], axis=0)))
+#%% Plot Results
+plt.figure()
+start_t = 0
+end_t = tot_iter
+markers_on = (np.ceil(np.linspace(start_t+1,end_t-1,10))).astype(int)
+markers_cdiego = (np.ceil(np.linspace(start_t+10,end_t-10,20))).astype(int)
+plt.semilogy(diego_m[start_t:end_t], label='FC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_m_Ta[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix}$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_m_Tb[start_t:end_t], label='NFC, Tc = '+ ' $\log(Nt)$',linestyle='dashed',linewidth=1,marker='>',markersize=7, markevery=markers_on.tolist())
+plt.semilogy(cdiego_m_T_opt[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
+plt.ylabel('Max Error')
+plt.xlabel('No. of Iterations')
+plt.legend()
+# plt.savefig('figures/FC_NFC_diff_TC.eps')
+plt.show()
