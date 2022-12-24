@@ -82,7 +82,7 @@ tot_iter = 50*1000 # Run for t iterations.
 eig_gap_fac_a = 1
 eig_gap_fac_b = 2
 N = 40
-monte_carlo = 50
+monte_carlo = 10
 p = 0.1 # Parameter for Erdos-Reyni Convergence
 step_size = 0.05
 #%% Initialize empty tensor to store values of nodes and monte carlo simulations against total iteration
