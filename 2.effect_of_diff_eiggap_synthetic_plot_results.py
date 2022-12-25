@@ -4,7 +4,9 @@ from matplotlib import pyplot as plt
 plt.rcParams['text.usetex'] = False
 ## Load Parameters & Data:
 param = np.load('sim_data/2.eff_eiggap_synthetic_params_mp.npy')
-cdiego_m = np.load('sim_data/2.eff_eiggap_synthetic_data_mp.npy')
+cdiego_m_ega = np.load('sim_data/2.eff_eiggap_ega_synthetic_data_mp.npy')
+cdiego_m_egb = np.load('sim_data/2.eff_eiggap_egb_synthetic_data_mp.npy')
+cdiego_m_egc = np.load('sim_data/2.eff_eiggap_egc_synthetic_data_mp.npy')
 ## Define Parameters using Loaded file
 d = int(param[0,0]) # Load dimensionality of data
 tot_iter = int(param[1,0]) # Load no. of iterations
@@ -19,12 +21,12 @@ eigen_gap_c = param[8,0]
 ## Load data of Consensus Rounds
 T_opt = param[9,0]
 #%% Compute Mean accross all Monte Carlo Simulations
-cdiego_m_FC_ega = np.squeeze(np.array(np.mean(cdiego_m[0, :, :], axis=0)))
-cdiego_m_T_opt_ega = np.squeeze(np.array(np.mean(cdiego_m[1, :, :], axis=0)))
-cdiego_m_FC_egb = np.squeeze(np.array(np.mean(cdiego_m[2, :, :], axis=0)))
-cdiego_m_T_opt_egb = np.squeeze(np.array(np.mean(cdiego_m[3, :, :], axis=0)))
-cdiego_m_FC_egc = np.squeeze(np.array(np.mean(cdiego_m[4, :, :], axis=0)))
-cdiego_m_T_opt_egc = np.squeeze(np.array(np.mean(cdiego_m[5, :, :], axis=0)))
+cdiego_m_FC_ega = np.squeeze(np.array(np.mean(cdiego_m_ega[0, :, :], axis=0)))
+cdiego_m_T_opt_ega = np.squeeze(np.array(np.mean(cdiego_m_ega[1, :, :], axis=0)))
+cdiego_m_FC_egb = np.squeeze(np.array(np.mean(cdiego_m_egb[0, :, :], axis=0)))
+cdiego_m_T_opt_egb = np.squeeze(np.array(np.mean(cdiego_m_egb[1, :, :], axis=0)))
+cdiego_m_FC_egc = np.squeeze(np.array(np.mean(cdiego_m_egc[0, :, :], axis=0)))
+cdiego_m_T_opt_egc = np.squeeze(np.array(np.mean(cdiego_m_egc[1, :, :], axis=0)))
 #%% Plot Results
 plt.figure()
 start_t = 0

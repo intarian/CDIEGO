@@ -35,8 +35,10 @@ eig_gap_fac_c = 4 #Controls the factor of eigengap.
 sigc = ((1 - 0.1) / (np.arange(1, d + 1)) ** eig_gap_fac_c) + 0.1
 eigen_gap_c = param[8,0] = np.round(sigc[0] - sigc[1], 3)
 #%% Initialize empty array to store error for monte carlo simulations
-# Save monte-carlo runs for C-DIEGO algorithm under different setting
-cdiego_m = np.zeros((6,monte_carlo,tot_iter)) # Total 3 eigengap. So 6 dataset (2 for each. One FC and one NFC)
+# Save monte-carlo runs for C-DIEGO algorithm under FC vs NFC under each eigengap
+cdiego_m_ega = np.zeros((2,monte_carlo,tot_iter))
+cdiego_m_egb = np.zeros((2,monte_carlo,tot_iter))
+cdiego_m_egc = np.zeros((2,monte_carlo,tot_iter))
 #%% Generate Covariance Matrix and ground truth eigenvector for different Eigengap
 [pca_vect_a, Sigma_a, eig_gap_a] = data_cov_mat_gen(d,eig_gap_fac_a)
 [pca_vect_b, Sigma_b, eig_gap_b] = data_cov_mat_gen(d,eig_gap_fac_b)
@@ -103,16 +105,18 @@ if __name__ == '__main__':
     print('Starting MP process')
     mon_ranges = np.arange(0,monte_carlo).tolist()
     pool = mp.Pool() # no of parallel workers
-    cdiego_m[0, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_ega, mon_ranges)
-    cdiego_m[1, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_ega, mon_ranges)
-    cdiego_m[2, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_egb, mon_ranges)
-    cdiego_m[3, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_egb, mon_ranges)
-    cdiego_m[4, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_egc, mon_ranges)
-    cdiego_m[5, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_egc, mon_ranges)
+    cdiego_m_ega[0, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_ega, mon_ranges)
+    cdiego_m_ega[1, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_ega, mon_ranges)
+    cdiego_m_egb[0, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_egb, mon_ranges)
+    cdiego_m_egb[1, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_egb, mon_ranges)
+    cdiego_m_egc[0, :, :] = pool.map(monte_carlo_mp_CDIEGO_FC_egc, mon_ranges)
+    cdiego_m_egc[1, :, :] = pool.map(monte_carlo_mp_CDIEGO_Topt_egc, mon_ranges)
     pool.close()
     pool.join()
     ## Save the data of arrays
-    np.save('sim_data/2.eff_eiggap_synthetic_data_mp.npy', cdiego_m)
+    np.save('sim_data/2.eff_eiggap_ega_synthetic_data_mp.npy', cdiego_m_ega)
+    np.save('sim_data/2.eff_eiggap_egb_synthetic_data_mp.npy', cdiego_m_egb)
+    np.save('sim_data/2.eff_eiggap_egc_synthetic_data_mp.npy', cdiego_m_egc)
     np.save('sim_data/2.eff_eiggap_synthetic_params_mp.npy', param)
 print("--- %s seconds ---" % (time.time() - start_time))
 
