@@ -1,7 +1,8 @@
 #%% This file computes the effects of different value of T_c to compare the
-# performance of DIEGO algorithm with CDIEGO using Synthetic Data.
-# The file runs CDIEGO algorithm for different values of T_c and shows that for optimal T_c,
-# the performance of CDIEGO(T_opt) is same as DIEGO.
+# performance of C-DIEGO algorithm under FC and NFC graph using Synthetic data.
+# The file runs C-DIEGO algorithm for different values of T_c and shows that for optimal T_c,
+# the performance of C-DIEGO(T_opt) is same as with C-DIEGO under FC.
+# We supply Tc = 1 for C-DIEGO under FC graph
 # The file just runs the algorithm and save the data in sim_data folder.
 #%% Import Libraries and functions
 import numpy as np
@@ -20,8 +21,8 @@ eig_gap_fac = 2 #Controls the factor of eigengap.
 siga = ((1 - 0.1) / (np.arange(1, d + 1)) ** eig_gap_fac) + 0.1
 eigen_gap = param[6,0] = np.round(siga[0] - siga[1], 3) # Set Eigengap
 #%% Initialize empty array to store error for monte carlo simulations
-# Save for DIEGO algorithm
-diego_cdiego_m = np.zeros((4,monte_carlo,tot_iter))
+# Save monte-carlo runs for C-DIEGO algorithm under different setting
+cdiego_m = np.zeros((4,monte_carlo,tot_iter))
 #%% Generate Covariance Matrix and ground truth eigenvector
 [pca_vect, Sigma, eig_gap] = data_cov_mat_gen(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
 #%% Generate random initial vector to be same for all monte-carlo simulations
@@ -45,13 +46,13 @@ for mon in range(0,monte_carlo):
     print('Current Monte Carlo Run is: ',mon,'\n')
     #%% Generate N*tot_iter data samples using Cov Mat for N nodes per iteration.
     x_samples = np.random.multivariate_normal(np.zeros(d), Sigma,N*tot_iter)
-    #%% Run DIEGO Algorithm
-    diego_cdiego_m[0,mon,:] = DIEGO(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size)
+    #%% Run CDIEGO Algorithm under FC
+    cdiego_m[0,mon,:] = CDIEGO(W_f,N,d,vti,tot_iter,x_samples,pca_vect,step_size,1)
     #%% Run CDIEGO Algorithm with different communication rounds
-    diego_cdiego_m[1,mon,:] = CDIEGO(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,T_a)
-    diego_cdiego_m[2,mon,:] = CDIEGO(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,T_b)
-    diego_cdiego_m[3,mon, :] = CDIEGO(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, T_opt)
+    cdiego_m[1,mon,:] = CDIEGO(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,T_a)
+    cdiego_m[2,mon,:] = CDIEGO(W_nf,N,d,vti,tot_iter,x_samples,pca_vect,step_size,T_b)
+    cdiego_m[3,mon, :] = CDIEGO(W_nf, N, d, vti, tot_iter, x_samples, pca_vect, step_size, T_opt)
 
 #%% Save the data of arrays
-np.save('sim_data/1.eff_Tc_DvsCD_data.npy', diego_cdiego_m)
-np.save('sim_data/1.eff_Tc_DvsCD_params.npy', param)
+np.save('sim_data/1.eff_Tc_synthetic_data.npy', cdiego_m)
+np.save('sim_data/1.eff_Tc_synthetic_params.npy', param)

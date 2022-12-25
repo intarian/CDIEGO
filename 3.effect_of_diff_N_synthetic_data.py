@@ -25,7 +25,7 @@ Na = param[5,0] = 10 # Set No of Nodes a
 Nb = param[6,0] = 25 # Set No of Nodes b
 Nc = param[7,0] = 50 # Set No of Nodes c
 #%% Initialize empty array to store error for monte carlo simulations
-# Save for DIEGO algorithm
+# Save monte-carlo runs for C-DIEGO algorithm under different setting
 cdiego_m = np.zeros((3,monte_carlo,tot_iter))
 #%% Generate Covariance Matrix and ground truth eigenvector
 [pca_vect, Sigma, eig_gap] = data_cov_mat_gen(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
@@ -53,15 +53,15 @@ for sam in range(0,monte_carlo):
 # CDIEGO Function (FC graph) Nodes a
 def monte_carlo_mp_CDIEGO_Na(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Na)
-    return DIEGO(W_f_Na, Na, d, vti, tot_iter, x_samples_m_Na[r, :, :], pca_vect, step_size)
+    return CDIEGO(W_f_Na, Na, d, vti, tot_iter, x_samples_m_Na[r, :, :], pca_vect, step_size,1)
 # CDIEGO Function (FC graph) Nodes b
 def monte_carlo_mp_CDIEGO_Nb(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Nb)
-    return DIEGO(W_f_Nb, Nb, d, vti, tot_iter, x_samples_m_Nb[r, :, :], pca_vect, step_size)
+    return CDIEGO(W_f_Nb, Nb, d, vti, tot_iter, x_samples_m_Nb[r, :, :], pca_vect, step_size,1)
 # CDIEGO Function (FC graph) Nodes c
 def monte_carlo_mp_CDIEGO_Nc(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Nc)
-    return DIEGO(W_f_Nc, Nc, d, vti, tot_iter, x_samples_m_Nc[r, :, :], pca_vect, step_size)
+    return CDIEGO(W_f_Nc, Nc, d, vti, tot_iter, x_samples_m_Nc[r, :, :], pca_vect, step_size,1)
 
 ## Start Parallelization on Multiple workers
 start_time = time.time()
@@ -75,6 +75,6 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     ## Save the data of arrays
-    np.save('sim_data/3.eff_N_DvsCD_data_mp.npy', cdiego_m)
-    np.save('sim_data/3.eff_N_DvsCD_param_mp.npy', param)
+    np.save('sim_data/3.eff_N_synthetic_data_mp.npy', cdiego_m)
+    np.save('sim_data/3.eff_N_synthetic_param_mp.npy', param)
 print("--- %s seconds ---" % (time.time() - start_time))

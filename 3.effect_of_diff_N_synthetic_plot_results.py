@@ -3,8 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 plt.rcParams['text.usetex'] = False
 ## Load Parameters & Data:
-param = np.load('sim_data/3.eff_N_DvsCD_param_mp.npy')
-cdiego_m = np.load('sim_data/3.eff_N_DvsCD_data_mp.npy')
+param = np.load('sim_data/3.eff_N_synthetic_param_mp.npy')
+cdiego_m = np.load('sim_data/3.eff_N_synthetic_data_mp.npy')
 ## Define Parameters using Loaded file
 d = int(param[0,0]) # Load dimensionality of data
 tot_iter = int(param[1,0]) # Load no. of iterations
@@ -28,7 +28,7 @@ plt.semilogy(cdiego_m_Na[start_t:end_t], label='FC, $N = $'+str(Na), linestyle='
 plt.semilogy(cdiego_m_Nb[start_t:end_t], label='FC, $N = $'+str(Nb), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
 plt.semilogy(cdiego_m_Nc[start_t:end_t], label='FC, $N = $'+str(Nc), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
 plt.ylabel('Average Error')
-plt.xlabel('No. of Iterations')
+plt.xlabel('No. of Iterations (t)')
 plt.legend()
 # plt.savefig('figures/FC_NFC_diff_TC.eps')
 plt.show()

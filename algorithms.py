@@ -1,5 +1,5 @@
-#%% This file contains implementation of DIEGO and CDIEGO algorithm. (for K=1 eigenvector)
-#%% Inputs for both functions
+#%% This file contains implementation of CDIEGO algorithm. (for K=1 eigenvector)
+#%% Inputs for function
 # W = Weight Matrix for algorithm (contains weight of the edges)
 # N = No. of Nodes of the network
 # d = Dimensions of the data of each sample
@@ -12,35 +12,6 @@
 #%% Import basic libraries
 import numpy as np
 from pca_data_functions import *
-#%% Begin define DIEGO Algorithm
-def DIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size):
-    # Data samples distribute among N nodes
-    x_samples_n = np.reshape(x_samples, (N, tot_iter, d))
-    # Now we initialize all N nodes with initial eigenvector vti
-    v_n = np.matrix(np.repeat(vti, N, axis=1))  # Initialize eigenvector estimate with vti at all nodes
-    err_n = np.zeros([N, tot_iter])  # store error across all N nodes in each iteration
-    # Begin loop to draw sample from each node and then compute their estimates and updates using W
-    for sample in range(0, tot_iter):
-        gamma_ext = step_size / (1 + sample)
-        upd_n = np.matrix(np.zeros([d, N]))  # Store update values across all nodes for each sample
-        # Begin loop to take sample from each node and update eigenvector estimate
-        for i_n in range(0, N):
-            x_n = Column(x_samples_n[i_n, sample, :])  # Draw sample across node i_n
-            vn = v_n[:, i_n]  # Draw current estimate of eigenvector across node i_n
-            upd_n[:, i_n] = (x_n @ x_n.T @ vn)
-        upd_n = upd_n @ W
-        # Update eigenvector estimate
-        v_n = v_n + gamma_ext * N*upd_n # for fully connected graph. scale by 1/[W^*e_1]i i.e scale by N
-        # Normalize the estimate to make unit norm
-        for i_n in range(0, N):
-            v_n[:, i_n] = v_n[:, i_n] / np.linalg.norm(v_n[:, i_n], 2)
-        # Compute Error for each iteration
-        for i_n in range(0, N):
-            err_n[i_n, sample] = np.sqrt(1 - ((v_n[:, i_n].T @ pca_vect) ** 2) / (
-                        np.linalg.norm(v_n[:, i_n], 2) ** 2))
-    # Compute mean error across all nodes at each iteration. For fully connected this is error across any node.
-    mean_err = np.squeeze(np.array(np.mean(err_n, axis=0)))
-    return mean_err
 
 #%% Begin define CDIEGO Algorithm
 def CDIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
@@ -80,4 +51,4 @@ def CDIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
             err_n[i_n, sample] = np.sqrt(1 - ((v_n[:, i_n].T @ pca_vect) ** 2) / (
                         np.linalg.norm(v_n[:, i_n], 2) ** 2))
     max_err = np.squeeze(np.array(np.max(err_n, axis=0)))
-    return max_err # Give out max error among all nodes from q_1 instead of mean error.
+    return max_err # Give out max error among all nodes from q_1.

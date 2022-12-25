@@ -3,8 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 plt.rcParams['text.usetex'] = False
 ## Load Parameters & Data:
-param = np.load('sim_data/1.eff_Tc_DvsCD_params_mp.npy')
-diego_cdiego_m = np.load('sim_data/1.eff_Tc_DvsCD_data_mp.npy')
+param = np.load('sim_data/1.eff_Tc_synthetic_params_mp.npy')
+cdiego_m = np.load('sim_data/1.eff_Tc_synthetic_data_mp.npy')
 ## Define Parameters using Loaded file
 d = int(param[0,0]) # Load dimensionality of data
 tot_iter = int(param[1,0]) # Load no. of iterations
@@ -18,22 +18,22 @@ T_a = param[7,0]
 T_b = param[8,0]
 T_opt = param[9,0]
 #%% Compute Mean accross all Monte Carlo Simulations
-diego_m = np.squeeze(np.array(np.mean(diego_cdiego_m[0,:,:], axis=0)))
-cdiego_m_Ta = np.squeeze(np.array(np.mean(diego_cdiego_m[1,:,:], axis=0)))
-cdiego_m_Tb = np.squeeze(np.array(np.mean(diego_cdiego_m[2,:,:], axis=0)))
-cdiego_m_T_opt = np.squeeze(np.array(np.mean(diego_cdiego_m[3,:,:], axis=0)))
+cdiego_m_FC = np.squeeze(np.array(np.mean(cdiego_m[0,:,:], axis=0)))
+cdiego_m_Ta = np.squeeze(np.array(np.mean(cdiego_m[1,:,:], axis=0)))
+cdiego_m_Tb = np.squeeze(np.array(np.mean(cdiego_m[2,:,:], axis=0)))
+cdiego_m_T_opt = np.squeeze(np.array(np.mean(cdiego_m[3,:,:], axis=0)))
 #%% Plot Results
 plt.figure()
 start_t = 0
 end_t = tot_iter
 markers_on = (np.ceil(np.linspace(start_t+1,end_t-1,10))).astype(int)
-markers_cdiego = (np.ceil(np.linspace(start_t+10,end_t-10,20))).astype(int)
-plt.semilogy(diego_m[start_t:end_t], label='FC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
+markers_cdiego_opt = (np.ceil(np.linspace(start_t+10,end_t-10,20))).astype(int)
+plt.semilogy(cdiego_m_FC[start_t:end_t], label='FC', linestyle='solid',linewidth=1,marker='^',markersize=7, markevery=markers_on.tolist())
 plt.semilogy(cdiego_m_Ta[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix}$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_on.tolist())
 plt.semilogy(cdiego_m_Tb[start_t:end_t], label='NFC, Tc = '+ ' $\log(Nt)$',linestyle='dashed',linewidth=1,marker='>',markersize=7, markevery=markers_on.tolist())
-plt.semilogy(cdiego_m_T_opt[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego.tolist())
-plt.ylabel('Max Error')
-plt.xlabel('No. of Iterations')
+plt.semilogy(cdiego_m_T_opt[start_t:end_t], label='NFC, Tc = '+ ' $T_{mix} (3/2) \log(Nt)$',linestyle='dashed',linewidth=1,marker='o',markersize=7, markevery=markers_cdiego_opt.tolist())
+plt.ylabel('Average Error')
+plt.xlabel('No. of Iterations (t)')
 plt.legend()
 # plt.savefig('figures/FC_NFC_diff_TC.eps')
 plt.show()
