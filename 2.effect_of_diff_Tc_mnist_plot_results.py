@@ -3,20 +3,19 @@ import numpy as np
 from matplotlib import pyplot as plt
 plt.rcParams['text.usetex'] = False
 ## Load Parameters & Data:
-param = np.load('sim_data/1.eff_Tc_DvsCD_params_mp.npy')
-diego_cdiego_m = np.load('sim_data/1.eff_Tc_DvsCD_data_mp.npy')
+param = np.load('sim_data/2.eff_Tc_DvsCD_mnist_params_mp.npy')
+diego_cdiego_m = np.load('sim_data/2.eff_Tc_DvsCD_mnist_data_mp.npy')
 ## Define Parameters using Loaded file
 d = int(param[0,0]) # Load dimensionality of data
-tot_iter = int(param[1,0]) # Load no. of iterations
-N = param[2,0] # Load No of Nodes
+N = param[1,0] # Load No of Nodes
+tot_iter = int(param[2,0]) # Load no. of iterations
 monte_carlo = param[3,0] # Load no. of monte carlo runs
 p = param[4,0] # Load Parameter for Erdos-Reyni Convergence
 step_size = param[5,0] # Load step size
-eigen_gap = param[6,0] # Load eigengap
 ## Load data of Consensus Rounds
-T_a = param[7,0]
-T_b = param[8,0]
-T_opt = param[9,0]
+T_a = param[6,0]
+T_b = param[7,0]
+T_opt = param[8,0]
 #%% Compute Mean accross all Monte Carlo Simulations
 diego_m = np.squeeze(np.array(np.mean(diego_cdiego_m[0,:,:], axis=0)))
 cdiego_m_Ta = np.squeeze(np.array(np.mean(diego_cdiego_m[1,:,:], axis=0)))
