@@ -5,7 +5,7 @@ The algorithm depends on multiple inputs, including designing of weight matrix u
 We explain the process of each function below and implementation in [pca_data_functions.py](https://github.com/intarian/CDIEGO/blob/main/pca_data_functions.py).  
 
 ## Population Covariance Matrix Generation 
-Details of generation of population covariance matrix $\mathbf{\Sigma}}$ with custom eigengap $\Lambda$ are as follows:  
+Details of generation of population covariance matrix $\mathbf{\Sigma}$ with custom eigengap $\Lambda$ are as follows:  
 
 
 
@@ -17,6 +17,7 @@ for three different values of consensus rounds $T_c$.
 1. $T_c = T_{mix}$
 2. $T_c = \log(Nt)$
 3. $T_c = T_{mix} \frac{3}{2} \log(Nt)$. which we define to be optimal value of consensus rounds.  
+
 **Expected Outcome**: The experiment show that for optimal value of $T_c$, there is no gap between the output by DIEGO (which assumes a fully connected network) and 
 that of output by C-DIEGO.  
 The same experiment is also performed using MNIST dataset is provided in [1a.effect_of_diff_Tc_mnist_data_mp.py](1a.effect_of_diff_Tc_mnist_data_mp.py)  
