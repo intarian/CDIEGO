@@ -3,8 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 plt.rcParams['text.usetex'] = False
 ## Load Parameters & Data:
-param = np.load('sim_data/2.eff_Tc_mnist_params_mp.npy')
-cdiego_m = np.load('sim_data/2.eff_Tc_mnist_data_mp.npy')
+param = np.load('sim_data/1a.eff_Tc_mnist_params_mp.npy')
+cdiego_m = np.load('sim_data/1a.eff_Tc_mnist_data_mp.npy')
 ## Define Parameters using Loaded file
 d = int(param[0,0]) # Load dimensionality of data
 N = param[1,0] # Load No of Nodes

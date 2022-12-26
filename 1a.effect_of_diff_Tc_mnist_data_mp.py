@@ -17,7 +17,7 @@ import pickle
 import gzip
 # Load the dataset
 (train_inputs, train_targets), (valid_inputs, valid_targets), (test_inputs, test_targets) = pickle.load(
-    gzip.open('MINST_dataset/mnist_py3k.pkl.gz', 'rb'))
+    gzip.open('MNIST_dataset/mnist_py3k.pkl.gz', 'rb'))
 data = np.concatenate((train_inputs, valid_inputs))
 #%% Define Parameters:
 param = np.zeros((9,1)) # Store the values of parameters
