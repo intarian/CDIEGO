@@ -11,22 +11,27 @@ import multiprocessing as mp
 import time
 from algorithms import *
 #%% Define Parameters:
-param = np.zeros((8,1)) # Store the values of parameters
+param = np.zeros((10,1)) # Store the values of parameters
 d = param[0,0] = 20 # Set dimensionality of data
-tot_iter = param[1,0] = 50*1000 # Set no. of iterations
+tot_iter = param[1,0] = 100*1000 # Set no. of iterations
 monte_carlo = param[2,0] = 50 # Set no. of monte carlo runs
-step_size = param[3,0] = 0.05 # Set step size
 #%% Set Eigengap
 eig_gap_fac = 2 #Controls the factor of eigengap.
 siga = ((1 - 0.1) / (np.arange(1, d + 1)) ** eig_gap_fac) + 0.1
-eigen_gap = param[4,0] = np.round(siga[0] - siga[1], 3) # Set Eigengap
+eigen_gap = param[3,0] = np.round(siga[0] - siga[1], 3) # Set Eigengap
+# Set step size for each topology size with diff no of Node
+step_size_Na = param[4,0] = 2
+step_size_Nb = param[5,0] = 0.3
+step_size_Nc = param[6,0] = 0.1
 ## (use multiple factor of tot_iter for even distribution of data at N nodes)
-Na = param[5,0] = 10 # Set No of Nodes a
-Nb = param[6,0] = 25 # Set No of Nodes b
-Nc = param[7,0] = 50 # Set No of Nodes c
+Na = param[7,0] = 1 # Set No of Nodes a
+Nb = param[8,0] = 20 # Set No of Nodes b
+Nc = param[9,0] = 60 # Set No of Nodes c
 #%% Initialize empty array to store error for monte carlo simulations
-# Save monte-carlo runs for C-DIEGO algorithm under different setting
-cdiego_m = np.zeros((3,monte_carlo,tot_iter))
+# Save monte-carlo runs for C-DIEGO algorithm under different setting for each N
+cdiego_m_Na = np.zeros((monte_carlo,tot_iter))
+cdiego_m_Nb = np.zeros((monte_carlo,tot_iter))
+cdiego_m_Nc = np.zeros((monte_carlo,tot_iter))
 #%% Generate Covariance Matrix and ground truth eigenvector
 [pca_vect, Sigma, eig_gap] = data_cov_mat_gen(d,eig_gap_fac) # Generate Cov Matrix and true eig vec
 #%% Generate random initial vector to be same for all monte-carlo simulations
@@ -53,15 +58,15 @@ for sam in range(0,monte_carlo):
 # CDIEGO Function (FC graph) Nodes a
 def monte_carlo_mp_CDIEGO_Na(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Na)
-    return CDIEGO(W_f_Na, Na, d, vti, tot_iter, x_samples_m_Na[r, :, :], pca_vect, step_size,1)
+    return CDIEGO(W_f_Na, Na, d, vti, tot_iter, x_samples_m_Na[r, :, :], pca_vect, step_size_Na,1)
 # CDIEGO Function (FC graph) Nodes b
 def monte_carlo_mp_CDIEGO_Nb(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Nb)
-    return CDIEGO(W_f_Nb, Nb, d, vti, tot_iter, x_samples_m_Nb[r, :, :], pca_vect, step_size,1)
+    return CDIEGO(W_f_Nb, Nb, d, vti, tot_iter, x_samples_m_Nb[r, :, :], pca_vect, step_size_Nb,1)
 # CDIEGO Function (FC graph) Nodes c
 def monte_carlo_mp_CDIEGO_Nc(r): # r is the index of monte-carlo simulations being processed by a core
     print('Current Monte Carlo for C-DIEGO (FC) is: ', r,'\n',' with N = ',Nc)
-    return CDIEGO(W_f_Nc, Nc, d, vti, tot_iter, x_samples_m_Nc[r, :, :], pca_vect, step_size,1)
+    return CDIEGO(W_f_Nc, Nc, d, vti, tot_iter, x_samples_m_Nc[r, :, :], pca_vect, step_size_Nc,1)
 
 ## Start Parallelization on Multiple workers
 start_time = time.time()
@@ -69,12 +74,14 @@ if __name__ == '__main__':
     print('Starting MP process')
     mon_ranges = np.arange(0,monte_carlo).tolist()
     pool = mp.Pool() # no of parallel workers
-    cdiego_m[0, :, :] = pool.map(monte_carlo_mp_CDIEGO_Na, mon_ranges)
-    cdiego_m[1, :, :] = pool.map(monte_carlo_mp_CDIEGO_Nb, mon_ranges)
-    cdiego_m[2, :, :] = pool.map(monte_carlo_mp_CDIEGO_Nc, mon_ranges)
+    cdiego_m_Na = pool.map(monte_carlo_mp_CDIEGO_Na, mon_ranges)
+    cdiego_m_Nb = pool.map(monte_carlo_mp_CDIEGO_Nb, mon_ranges)
+    cdiego_m_Nc = pool.map(monte_carlo_mp_CDIEGO_Nc, mon_ranges)
     pool.close()
     pool.join()
     ## Save the data of arrays
-    np.save('sim_data/3.eff_N_synthetic_data_mp.npy', cdiego_m)
+    np.save('sim_data/3.eff_Na_synthetic_data_mp.npy', cdiego_m_Na)
+    np.save('sim_data/3.eff_Nb_synthetic_data_mp.npy', cdiego_m_Nb)
+    np.save('sim_data/3.eff_Nc_synthetic_data_mp.npy', cdiego_m_Nc)
     np.save('sim_data/3.eff_N_synthetic_param_mp.npy', param)
 print("--- %s seconds ---" % (time.time() - start_time))
