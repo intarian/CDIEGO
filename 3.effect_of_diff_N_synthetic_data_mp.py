@@ -20,9 +20,9 @@ eig_gap_fac = 2 #Controls the factor of eigengap.
 siga = ((1 - 0.1) / (np.arange(1, d + 1)) ** eig_gap_fac) + 0.1
 eigen_gap = param[3,0] = np.round(siga[0] - siga[1], 3) # Set Eigengap
 # Set step size for each topology size with diff no of Node
-step_size_Na = param[4,0] = 2
-step_size_Nb = param[5,0] = 0.3
-step_size_Nc = param[6,0] = 0.1
+step_size_Na = param[4,0] = 1.5
+step_size_Nb = param[5,0] = 0.6
+step_size_Nc = param[6,0] = 0.2
 ## (use multiple factor of tot_iter for even distribution of data at N nodes)
 Na = param[7,0] = 1 # Set No of Nodes a
 Nb = param[8,0] = 20 # Set No of Nodes b
@@ -50,6 +50,7 @@ x_samples_m_Nb = np.zeros((monte_carlo,Nb*tot_iter,d))
 x_samples_m_Nc = np.zeros((monte_carlo,Nc*tot_iter,d))
 for sam in range(0,monte_carlo):
     # %% Generate N*tot_iter data samples using Cov Mat for N nodes per iteration.
+    print('Generating Data samples for monte carlo run index: ',sam,'\n')
     x_samples_m_Na[sam, :, :] = np.random.multivariate_normal(np.zeros(d), Sigma, Na * tot_iter)
     x_samples_m_Nb[sam, :, :] = np.random.multivariate_normal(np.zeros(d), Sigma, Nb * tot_iter)
     x_samples_m_Nc[sam, :, :] = np.random.multivariate_normal(np.zeros(d), Sigma, Nc * tot_iter)

@@ -1,6 +1,6 @@
 # Implementation of Consensus-DIstributEd Generalized Oja Algorithm (C-DIEGO)
 This project contains the implementation of C-DIEGO algorithm in a file [algorithms.py](https://github.com/intarian/CDIEGO/blob/main/algorithms.py).  
-The algorithm depends on multiple inputs, including designing of weight matrix using $Erd\H{o}s-R\'{e}yni$ approach, generation of Synthetic data etc.  
+The algorithm depends on multiple inputs, including designing of weight matrix using Erdős–Rényi approach, generation of Synthetic data etc.  
 
 We explain the process of each function below and implementation in [pca_data_functions.py](https://github.com/intarian/CDIEGO/blob/main/pca_data_functions.py).  
 

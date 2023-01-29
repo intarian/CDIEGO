@@ -41,4 +41,5 @@ plt.show()
 #%% Test the scaling
 start_t = tot_iter-10
 end_t = tot_iter
-print(cdiego_m_Nb[start_t:end_t]/cdiego_m_Nc[start_t:end_t])
+print(cdiego_m_Nc[start_t:end_t]/cdiego_m_Na[start_t:end_t])
+print(np.sqrt(Na/Nc))
