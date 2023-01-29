@@ -30,16 +30,18 @@ plt.figure()
 start_t = 0
 end_t = tot_iter
 markers_on = (np.ceil(np.linspace(start_t+1,end_t-1,10))).astype(int)
-plt.semilogy(cdiego_m_Na[start_t:end_t], label='FC, $N = $'+str(Na)+', alpha = '+str(step_size_Na), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
-plt.semilogy(cdiego_m_Nb[start_t:end_t], label='FC, $N = $'+str(Nb)+', alpha = '+str(step_size_Nb), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
-plt.semilogy(cdiego_m_Nc[start_t:end_t], label='FC, $N = $'+str(Nc)+', alpha = '+str(step_size_Nc), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
+plt.plot(cdiego_m_Na[start_t:end_t], label='FC, $N = $'+str(Na)+', alpha = '+str(step_size_Na), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
+plt.plot(cdiego_m_Nb[start_t:end_t], label='FC, $N = $'+str(Nb)+', alpha = '+str(step_size_Nb), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
+plt.plot(cdiego_m_Nc[start_t:end_t], label='FC, $N = $'+str(Nc)+', alpha = '+str(step_size_Nc), linestyle='solid',linewidth=1,marker='^',markersize=4, markevery=markers_on.tolist())
+plt.yscale("log")
+plt.xscale("log")
 plt.ylabel('Average Error')
 plt.xlabel('No. of Iterations (t)')
 plt.legend()
-# plt.savefig('figures/FC_NFC_diff_TC.eps')
+plt.savefig('images/effc_diff_N.eps')
 plt.show()
 #%% Test the scaling
 start_t = tot_iter-10
 end_t = tot_iter
-print(cdiego_m_Nc[start_t:end_t]/cdiego_m_Na[start_t:end_t])
-print(np.sqrt(Na/Nc))
+print(cdiego_m_Nb[start_t:end_t]/cdiego_m_Nc[start_t:end_t])
+print(np.sqrt(Nc/Nb))
