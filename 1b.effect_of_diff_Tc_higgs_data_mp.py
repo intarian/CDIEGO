@@ -13,20 +13,18 @@ from pca_data_functions import *
 import multiprocessing as mp
 import time
 from algorithms import *
-#%% Load MNIST Dataset
-import pickle
+#%% Load Higgs Dataset
 import gzip
+import pandas as pd
 # Load the dataset
-(train_inputs, train_targets), (valid_inputs, valid_targets), (test_inputs, test_targets) = pickle.load(
-    gzip.open('Higgs_dataset/HIGGS.csv.gz', 'rb'))
-data = np.concatenate((train_inputs, valid_inputs))
+data =pd.read_csv('Higgs_dataset/HIGGS.csv.gz',nrows=100)
 #%% Define Parameters:
 param = np.zeros((9,1)) # Store the values of parameters
 d = param[0,0] = data.shape[1] # Set dimensionality of data
-N = param[1,0] = 10 # Set No of Nodes
+N = param[1,0] = 100 # Set No of Nodes
 tot_iter = param[2,0] = int(data.shape[0]/N) # Set no. of iterations
 monte_carlo = param[3,0] = 50 # Set no. of monte carlo runs
-p = param[4,0] = 0.1 # Set Parameter for Erdos-Reyni Convergence
+p = param[4,0] = 0.3 # Set Parameter for Erdos-Reyni Convergence
 step_size = param[5,0] = 0.05 # Set step size
 #%% Compute True eigenvectors for MINST (Using Sample Covariance method)
 A = (1/data.shape[0])*np.matrix(data.T@data) # Find covariance matrix Sigma using \Sigma = \tilde{A}^T \tilde{A}
@@ -93,8 +91,8 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
     ## Save the data of arrays
-    np.save('sim_data/1a.eff_Tc_mnist_data_mp.npy', cdiego_m)
-    np.save('sim_data/1a.eff_Tc_mnist_params_mp.npy', param)
+    np.save('sim_data/1a.eff_Tc_higgs_data_mp.npy', cdiego_m)
+    np.save('sim_data/1a.eff_Tc_higgs_params_mp.npy', param)
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
