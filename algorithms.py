@@ -34,7 +34,7 @@ def CDIEGO(W,N,d,vti,tot_iter,x_samples,pca_vect,step_size,Tc):
             upd_n = upd_n @ W
         # After updating upd_n data. The next thing is to scale it by W^R instead of N.
         W_e1 = (W ** Tc)
-        W_e1 = np.diag(W_e1)
+        W_e1 = np.diag(W_e1) # Changed from getting 1st evect to only diagonal entries which can never be 0.
         if (W_e1 == 0).any():
             print(W)
             print('Failed to run. Weight matrix has a zero. Try increasing Tmix')

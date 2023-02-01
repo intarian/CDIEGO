@@ -5,6 +5,7 @@ __pycache__/
 
 # Simulations Data
 #sim_data_old/
+Higgs_dataset/
 
 # C extensions
 *.so

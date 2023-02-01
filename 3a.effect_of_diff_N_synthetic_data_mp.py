@@ -14,20 +14,20 @@ from algorithms import *
 #%% Define Parameters:
 param = np.zeros((10,1)) # Store the values of parameters
 d = param[0,0] = 20 # Set dimensionality of data
-tot_iter = param[1,0] = 10*1000 # Set no. of iterations
+tot_iter = param[1,0] = 30*1000 # Set no. of iterations
 monte_carlo = param[2,0] = 20 # Set no. of monte carlo runs
 #%% Set Eigengap
 eig_gap_fac = 2 #Controls the factor of eigengap.
 siga = ((1 - 0.1) / (np.arange(1, d + 1)) ** eig_gap_fac) + 0.1
 eigen_gap = param[3,0] = np.round(siga[0] - siga[1], 3) # Set Eigengap
 # Set step size for each topology size with diff no of Node
-step_size_Na = param[4,0] = 0.5
+step_size_Na = param[4,0] = 1
 step_size_Nb = param[5,0] = 1
 step_size_Nc = param[6,0] = 1.5
 ## (use multiple factor of tot_iter for even distribution of data at N nodes)
 Na = param[7,0] = 10 # Set No of Nodes a
-Nb = param[8,0] = 10 # Set No of Nodes b
-Nc = param[9,0] = 10 # Set No of Nodes c
+Nb = param[8,0] = 20 # Set No of Nodes b
+Nc = param[9,0] = 20 # Set No of Nodes c
 #%% Initialize empty array to store error for monte carlo simulations
 # Save monte-carlo runs for C-DIEGO algorithm under different setting for each N
 cdiego_m_Na = np.zeros((monte_carlo,tot_iter))
@@ -41,20 +41,10 @@ vti = Column(vti / np.linalg.norm(vti))  # unit normalize for selection over uni
 #%% Load Topologies generated using file 3a.effect_of_diff_N_topologies_gen.py
 A_Na = np.load('sim_data/3a.topo_gen_Na.npy')
 A_Nb = np.load('sim_data/3a.topo_gen_Nb.npy')
-A_Nc = np.load('sim_data/3a.topo_gen_Na.cnpy')
+A_Nc = np.load('sim_data/3a.topo_gen_Nb.npy')
 W_nf_Na = W_gen_M(Na, A_Na)
 W_nf_Nb = W_gen_M(Nb, A_Nb)
 W_nf_Nc = W_gen_M(Nc, A_Nc)
-# #%% Ensure that node 1 is connnected to all nodes. (This should be changed later)
-# while (W_nf_Na[:, 0] == 0).any():
-#     print('\nW_nf_Na: ', ' with N = ', Na)
-#     W_nf_Na = W_gen_M(Na, A_Na)
-# while (W_nf_Nb[:, 0] == 0).any():
-#     print('\nW_nf_Na: ', ' with N = ', Nb)
-#     W_nf_Nb = W_gen_M(Nb, A_Nb)
-# while (W_nf_Nc[:, 0] == 0).any():
-#     print('\nW_nf_Na: ', ' with N = ', Nc)
-#     W_nf_Nc = W_gen_M(Nc, A_Nc)
 #%% Parallelization Begins here #%%
 
 #%% Generate samples for all monte-carlo runs # Consumes alot of memory.
